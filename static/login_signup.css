@@ -93,13 +93,6 @@ header {
     text-decoration: none;
 }
 
-.quote {
-    font-style: italic;
-    color: #8590a6;
-    text-align: center;
-    margin-top: 30px;
-    font-size: 14px;
-}
 
 .login-container {
     max-width: 400px;
@@ -143,4 +136,12 @@ header {
 .signup-link a {
     color: #0084ff;
     text-decoration: none;
+}
+
+.quote {
+    font-style: italic;
+    color: #8590a6;
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
 }
