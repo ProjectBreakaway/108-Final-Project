@@ -1,55 +1,136 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Philosophical Investigation</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/index.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">φιλοσοφία</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                       aria-expanded="false">
-                        Dropdown
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-                </li>
-            </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
+<header>
+    <div class="container">
+        <nav>
+            <a href="/" style="text-decoration: none;">
+                <h1 class="logo">Philosophia</h1>
+            </a>
+            <div class="main-nav">
+                <a href="#">Home</a>
+                <a href="#">Topics</a>
+                <a href="#">Library</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search philosophical questions...">
+                <button class="search-button">Search</button>
+            </div>
+            <div class="user-nav">
+                <a href="login.html">Log in</a>
+                <a href="createUser.html">Sign up</a>
+            </div>
+        </nav>
     </div>
-</nav>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
-        crossorigin="anonymous"></script>
+</header>
+
+<div class="container">
+    <div class="content">
+        <main class="main-content">
+            <div class="feed-tabs">
+                <div class="feed-tab active">Recommended</div>
+                <div class="feed-tab">Following</div>
+            </div>
+
+            <div class="question-card">
+                <h2 class="question-title"><a href="#">If Nietzsche had lived longer, how might his philosophy have
+                    evolved?</a></h2>
+                <div class="answer-excerpt">
+                    <span class="answer-author">PhilosophyHistorian:</span> Nietzsche's late works show an increasing
+                    preoccupation with the concept of the "will to power" as a fundamental aspect of reality. Had he not
+                    succumbed to illness in 1900, we might have seen...
+                </div>
+                <a href="#" class="read-more">Read more</a>
+                <div class="answer-meta">
+                    <div class="answer-action">👍 1.2k赞同</div>
+                    <div class="answer-action">💬 84 comments</div>
+                    <div class="answer-action">↗ Share</div>
+                    <div class="answer-action">🔖 Bookmark</div>
+                    <div class="answer-action">❤ Like</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h2 class="question-title"><a href="#">What's the difference between existentialism, absurdism, and
+                    nihilism?</a></h2>
+                <div class="answer-excerpt">
+                    <span class="answer-author">ModernThinker:</span> While these philosophies all grapple with the
+                    meaning (or lack thereof) in life, they propose fundamentally different responses. Existentialism
+                    argues we must create our own meaning...
+                </div>
+                <a href="#" class="read-more">Read more</a>
+                <div class="answer-meta">
+                    <div class="answer-action">👍 874赞同</div>
+                    <div class="answer-action">💬 42 comments</div>
+                    <div class="answer-action">↗ Share</div>
+                    <div class="answer-action">🔖 Bookmark</div>
+                    <div class="answer-action">❤ Like</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <h2 class="question-title"><a href="#">How to understand Sartre's "Hell is other people"?</a></h2>
+                <div class="answer-excerpt">
+                    <span class="answer-author">UrbanPhilosopher:</span> People always try to maintain their own
+                    subjectivity, so human relationships inevitably become struggles for subjectivity. In any
+                    interaction, we try to turn others into objects to preserve our own...
+                </div>
+                <a href="#" class="read-more">Read more</a>
+                <div class="answer-meta">
+                    <div class="answer-action">👍 2.5k赞同</div>
+                    <div class="answer-action">💬 156 comments</div>
+                    <div class="answer-action">↗ Share</div>
+                    <div class="answer-action">🔖 Bookmark</div>
+                    <div class="answer-action">❤ Like</div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Create Content</h3>
+                <button class="create-btn">Ask Question</button>
+                <button class="create-btn">Write Article</button>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Recommended Topics</h3>
+                <ul class="recommend-list">
+                    <li class="recommend-item"><a href="#">Existentialism</a>
+                        <button class="follow-btn">+ Follow</button>
+                    </li>
+                    <li class="recommend-item"><a href="#">Ethics</a>
+                        <button class="follow-btn">+ Follow</button>
+                    </li>
+                    <li class="recommend-item"><a href="#">Metaphysics</a>
+                        <button class="follow-btn">+ Follow</button>
+                    </li>
+                    <li class="recommend-item"><a href="#">Political Philosophy</a>
+                        <button class="follow-btn">+ Follow</button>
+                    </li>
+                    <li class="recommend-item"><a href="#">Eastern Philosophy</a>
+                        <button class="follow-btn">+ Follow</button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-widget">
+                <h3 class="widget-title">Recommended Books</h3>
+                <ul class="recommend-list">
+                    <li class="recommend-item"><a href="#">Socrates</a></li>
+                    <li class="recommend-item"><a href="#">Simone de Beauvoir</a></li>
+                    <li class="recommend-item"><a href="#">Ludwig Wittgenstein</a></li>
+                    <li class="recommend-item"><a href="#">Confucius</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</div>
 </body>
 </html>

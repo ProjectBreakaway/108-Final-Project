@@ -1,0 +1,253 @@
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #1a1a1a;
+    background-color: #f6f6f6;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+header {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 12px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0084ff;
+    margin: 0;
+    display: inline-block;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main-nav {
+    display: flex;
+    gap: 20px;
+    margin-left: 30px;
+}
+
+.main-nav a {
+    color: #8590a6;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.main-nav a:hover {
+    color: #0084ff;
+}
+
+.user-nav {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.search-bar {
+    display: flex;
+    flex-grow: 1;
+    margin: 0 30px;
+    max-width: 400px;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ebebeb;
+    border-radius: 4px 0 0 4px;
+    background-color: #f6f6f6;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #0084ff;
+}
+
+.search-button {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    padding: 0 15px;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background-color: #0073e6;
+}
+
+.content {
+    display: flex;
+    margin-top: 20px;
+}
+
+.main-content {
+    flex: 2;
+    margin-right: 20px;
+}
+
+.sidebar {
+    flex: 1;
+}
+
+.feed-tabs {
+    display: flex;
+    border-bottom: 1px solid #ebebeb;
+    margin-bottom: 15px;
+}
+
+.feed-tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 15px;
+    color: #8590a6;
+}
+
+.feed-tab.active {
+    color: #0084ff;
+    border-bottom: 2px solid #0084ff;
+}
+
+.question-card {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+}
+
+.question-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #1a1a1a;
+}
+
+.question-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.question-title a:hover {
+    color: #175199;
+}
+
+.answer-excerpt {
+    margin: 10px 0;
+    color: #444;
+    font-size: 15px;
+}
+
+.answer-author {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.answer-meta {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    color: #8590a6;
+    font-size: 14px;
+}
+
+.answer-action {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.read-more {
+    color: #175199;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.sidebar-widget {
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 15px;
+}
+
+.widget-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: #1a1a1a;
+}
+
+.create-btn {
+    background-color: #0084ff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.recommend-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recommend-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f6f6f6;
+}
+
+.recommend-item:last-child {
+    border-bottom: none;
+}
+
+.recommend-item a {
+    color: #175199;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.follow-btn {
+    background-color: transparent;
+    border: 1px solid #0084ff;
+    color: #0084ff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    float: right;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #ebebeb;
+    margin: 20px 0;
+}
+
+

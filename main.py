@@ -41,24 +41,33 @@ class User(db.Model):
 def index():
     return render_template("index.html")
 
+@app.route('/login.html')
+def login():
+    return render_template("login.html")
 
-@app.route("/create/user", methods=["GET", "POST"])
+@app.route('/createUser.html')
+def create_user_html():
+    return render_template("createUser.html")
+
+@app.route("/create/user", methods=["POST"])
 def create_user():
-    if request.method == 'GET':
-        return render_template("createUser.html")
-
     data = request.get_json()
     username = data["username"]
     password = data["password"]
-    description = data["description"]
+    confirmPassword = data["confirmPassword"]
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "User already exist"}), 404
 
+    if len(password) < 8:
+        return jsonify({"error": "Password must be at least 8 characters long"}), 400
+
+    if password != confirmPassword:
+        return jsonify({"error": "Passwords don't match"}), 403
+
     user = User(
         username=username,
         password=password,
-        description=description,
     )
     db.session.add(user)
     db.session.commit()
@@ -128,7 +137,6 @@ def create_comment(question_title, username):
         db.session.commit()
 
     return render_template("index.html")
-
 
 @app.route("/delete/question/<string:question_title>", methods=["DELETE"])
 def delete_question(question_title):
