@@ -74,11 +74,8 @@ def create_user():
     return jsonify({"success": "User created successfully"}), 404
 
 
-@app.route("/create/question/<string:username>", methods=["GET", "POST"])
+@app.route("/create/question/<string:username>", methods=["POST"])
 def create_question(username):
-    if request.method == 'GET':
-        return render_template("createQuestion.html")
-
     data = request.get_json()
     title = data["title"]
     text = data["text"]
@@ -106,11 +103,8 @@ def create_question(username):
     return render_template("index.html")
 
 
-@app.route("/create/question/<string:question_title>/comment/<string:username>", methods=["GET", "POST"])
+@app.route("/create/question/<string:question_title>/comment/<string:username>", methods=["POST"])
 def create_comment(question_title, username):
-    if request.method == 'GET':
-        return render_template("createComment.html")
-
     data = request.get_json()
     text = data["text"]
     userId = 0
