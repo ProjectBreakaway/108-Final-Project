@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophia - Edit Profile</title>
+    <link rel="stylesheet" href="../static/settings.css">
+</head>
+<body>
+<header>
+    <div class="container">
+        <nav>
+            <a href="index.html" class="logo">Philosophia</a>
+            <div class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="#">Topics</a>
+                <a href="#">Library</a>
+            </div>
+            <div class="profile-btn">
+                <div class="profile-pic">Ph</div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <div class="account-container">
+        <aside class="account-sidebar">
+            <h3 class="sidebar-title">My Account</h3>
+            <ul class="sidebar-menu">
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#">My Questions</a></li>
+                <li><a href="#">My Answers</a></li>
+                <li><a href="#">Following</a></li>
+                <li><a href="settings.html" class="active">Settings</a></li>
+                <li><a href="index.html">Log Out</a></li>
+            </ul>
+        </aside>
+
+        <main class="edit-profile-main">
+            <div class="page-header">
+                <h1 class="page-title">Edit Profile</h1>
+            </div>
+
+            <form class="edit-profile-form">
+                <div class="form-section">
+                    <h3 class="section-header">Basic Information</h3>
+
+                    <div class="form-row">
+                        <label for="name">Display Name</label>
+                        <input type="text" id="name" value="John Doe">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" value="philosophical_john">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-header">About Me</h3>
+
+                    <div class="form-row">
+                        <label for="bio">Philosophical Bio</label>
+                        <textarea id="bio">Philosophy enthusiast specializing in existentialism and ethics. Currently exploring the intersection of AI and moral philosophy. Believer in Socratic dialogue as a path to truth.</textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a href="profile.html" style="text-decoration: none;" class="cancel-btn">Cancel</a>
+                    <button class="save-btn">Save Changes</button>
+                </div>
+
+                <div class="philosophy-quote">
+                    "Know thyself." — Ancient Greek maxim inscribed at the Temple of Apollo at Delphi
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

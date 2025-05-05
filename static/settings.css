@@ -1,0 +1,246 @@
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #1a1a1a;
+    background-color: #f6f6f6;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header {
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0084ff;
+    text-decoration: none;
+}
+
+.main-nav {
+    display: flex;
+    gap: 25px;
+}
+
+.main-nav a {
+    color: #1a1a1a;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s;
+}
+
+.main-nav a:hover {
+    color: #0084ff;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.profile-pic {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #0084ff;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.account-container {
+    display: flex;
+    margin-top: 30px;
+    gap: 30px;
+}
+
+.account-sidebar {
+    width: 250px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: fit-content;
+}
+
+.edit-profile-main {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 12px;
+}
+
+.sidebar-menu a {
+    color: #1a1a1a;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    transition: color 0.2s;
+}
+
+.sidebar-menu a:hover {
+    color: #0084ff;
+}
+
+.sidebar-menu a.active {
+    color: #0084ff;
+    font-weight: 500;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.edit-profile-form {
+    max-width: 600px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.section-header {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ebebeb;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}
+
+.form-row label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.form-row input[type="text"],
+.form-row textarea,
+.form-row select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.form-row input[type="text"]:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+    border-color: #0084ff;
+    outline: none;
+}
+
+.form-row textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ebebeb;
+}
+
+.cancel-btn {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    color: #1a1a1a;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #f5f5f5;
+}
+
+.save-btn {
+    padding: 10px 20px;
+    background: #0084ff;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.save-btn:hover {
+    background: #0077e6;
+}
+
+.philosophy-quote {
+    font-style: italic;
+    color: #666;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #ebebeb;
+    text-align: center;
+    font-size: 14px;
+}
