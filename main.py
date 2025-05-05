@@ -41,6 +41,26 @@ class User(db.Model):
 def index():
     return render_template("index.html")
 
+@app.route('/index.html')
+def home():
+    return render_template("index.html")
+
+@app.route('/login.html')
+def login():
+    return render_template("login.html")
+
+@app.route('/createUser.html')
+def create_user_html():
+    return render_template("createUser.html")
+
+@app.route('/profile.html')
+def profile():
+    return render_template("profile.html")
+
+@app.route('/settings.html')
+def settings():
+    return render_template("settings.html")
+
 @app.route("/create/user", methods=["POST"])
 def create_user():
     data = request.get_json()
