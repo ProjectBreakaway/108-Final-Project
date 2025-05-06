@@ -63,6 +63,47 @@ function signUp() {
         .catch(err => console.error(err));
 }
 
+function createQuestion(){
+    const question_title=document.getElementById("question_title").value;
+    const question_ask=document.getElementById("question_ask").value;
+
+    console.log('correct before fetch')
+    fetch(`${url}/create/question/<string:username>`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "title": question_title,
+            "text": question_ask,
+            })
+        })
+        .then(response => response.json())
+        .then(_ => {
+            // change_corner(); 
+            //username = username_signup;
+            redirectToHomePage();
+        })
+        .catch(err => console.error(err));
+}
+function createComment(){
+    const create_comment=document.getElementById("create_comment").value;
+
+    console.log('correct before fetch')
+    fetch(`${url}/create/question/<string:username>/comment/<string:username>`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "text": create_comment,
+            })
+        })
+        .then(response => response.json())
+        .then(_ => {
+            // change_corner(); 
+            //username = username_signup;
+            redirectToHomePage();
+        })
+        .catch(err => console.error(err));
+}
+
 function change_corner(){
     const corner = document.getElementById("rightTopCorner");
     corner.innerHTML = `
