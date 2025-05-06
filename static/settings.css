@@ -52,10 +52,18 @@ nav {
 }
 
 .profile-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
-    cursor: pointer;
+}
+
+.profile-btn:hover .profile-pic {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.3);
 }
 
 .profile-pic {
@@ -68,6 +76,7 @@ nav {
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    transition: all 0.2s ease;
 }
 
 .account-container {

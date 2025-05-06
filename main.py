@@ -1,10 +1,21 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import secrets
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
 db = SQLAlchemy(app)
 
+def generate_salt():
+    return secrets.token_hex(16)
+
+def hash_password(password: str, salt: str) -> str:
+    salted_password = salt + password
+    return hex(hash(salted_password))[2:]
+
+def verify_password(stored_hash: str, stored_salt: str, input_password: str) -> bool:
+    test_hash = hash_password(input_password, stored_salt)
+    return secrets.compare_digest(stored_hash, test_hash)
 
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -34,6 +45,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column(db.String(), nullable=False)
+    salt = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
 
 
@@ -49,9 +61,9 @@ def home():
 def login():
     return render_template("login.html")
 
-@app.route('/createUser.html')
+@app.route('/signup.html')
 def create_user_html():
-    return render_template("createUser.html")
+    return render_template("signup.html")
 
 @app.route('/profile.html')
 def profile():
@@ -61,29 +73,37 @@ def profile():
 def settings():
     return render_template("settings.html")
 
-@app.route("/create/user", methods=["POST"])
+@app.route('/<string:username>/<string:password>')
+def sign_in(username, password):
+    if User.query.filter_by(username=username).first():
+        user = User.query.filter_by(username=username).first()
+        if verify_password(user.password, user.salt, password):
+            return jsonify({"success": "User created successfully"}), 201
+        else:
+            return jsonify({"error": "Incorrect password"}), 401
+    else:
+        return jsonify({"error": "No username found"}), 401
+
+
+@app.route("/create/", methods=["POST"])
 def create_user():
     data = request.get_json()
     username = data["username"]
     password = data["password"]
-    confirmPassword = data["confirmPassword"]
 
     if User.query.filter_by(username=username).first():
         return jsonify({"error": "User already exist"}), 404
-
-    if len(password) < 8:
-        return jsonify({"error": "Password must be at least 8 characters long"}), 400
-
-    if password != confirmPassword:
-        return jsonify({"error": "Passwords don't match"}), 403
+    salt = generate_salt()
+    hashed_password = hash_password(password, salt)
 
     user = User(
         username=username,
-        password=password,
+        password=hashed_password,
+        salt=salt,
     )
     db.session.add(user)
     db.session.commit()
-    return jsonify({"success": "User created successfully"}), 404
+    return jsonify({"success": "User created successfully"}), 200
 
 
 @app.route("/create/question/<string:username>", methods=["POST"])
@@ -176,3 +196,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         app.run(debug=True)
+        db.drop_all()

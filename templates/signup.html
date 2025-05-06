@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
     <link rel="stylesheet" href="../static/login_signup.css">
+    <script src="../static/app.js"></script>
 </head>
 <body>
 <header>
@@ -22,21 +23,21 @@
         <h2 class="signup-title">Join Philosophia</h2>
         <form>
             <div class="form-group">
-                <label for="name">Username</label>
-                <input type="text" id="name" placeholder="Choose a username">
+                <label for="username_signup">Username</label>
+                <input type="text" id="username_signup" placeholder="Choose a username">
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Create a password (min. 8 characters)">
+                <label for="password_signup">Password</label>
+                <input type="password" id="password_signup" placeholder="Create a password (min. 8 characters)">
             </div>
 
             <div class="form-group">
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" id="confirm-password" placeholder="Confirm your password">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" placeholder="Confirm your password">
             </div>
-
-            <button type="submit" class="signup-btn">Create Account</button>
+            <div id="signup-error" style="display: none; margin: 10px 0;"></div>
+            <button type="button" onclick="signUp()" class="signup-btn">Create Account</button>
         </form>
 
         <div class="login-link">
