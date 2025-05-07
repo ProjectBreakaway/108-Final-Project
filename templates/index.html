@@ -5,17 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Philosophical Investigation</title>
     <link rel="stylesheet" href="../static/index.css">
-    <script src="../static/app.js"></script>
 </head>
 <body>
 <header>
     <div class="container">
         <nav>
-            <a onclick="toHome()" style="text-decoration: none;">
+            <a href="index" style="text-decoration: none;">
                 <h1 class="logo">Philosophia</h1>
             </a>
             <div class="main-nav">
-                <a onclick="toHome()">Home</a>
+                <a href="index">Home</a>
                 <a href="#">Topics</a>
                 <a href="#">Library</a>
             </div>
@@ -24,8 +23,8 @@
                 <button class="search-button">Search</button>
             </div>
             <div id="rightTopCorner">
-                <a onclick="toLogin()" style="text-decoration: none;" class="login-btn">Log in</a>
-                <a onclick="toSignup()" style="text-decoration: none;" class="login-btn">Sign up</a>
+                <a href="login" style="text-decoration: none;" class="login-btn">Log in</a>
+                <a href="signup" style="text-decoration: none;" class="login-btn">Sign up</a>
             </div>
         </nav>
     </div>
@@ -35,8 +34,8 @@
     <div class="content">
         <main class="main-content">
             <div class="feed-tabs">
-                <div class="feed-tab active" onclick="toHome()">Recommended</div>
-                <div class="feed-tab" onclick="toLogin()">Following</div>
+                <div class="feed-tab active" onclick="window.location.href='index'">Recommended</div>
+                <div class="feed-tab" onclick="window.location.href='login'">Following</div>
             </div>
 
             <div class="question-card">
@@ -90,8 +89,8 @@
         <aside class="sidebar">
             <div class="sidebar-widget">
                 <h3 class="widget-title">Create Content</h3>
-                <button class="create-btn" onclick="toLogin()">Ask Question</button>
-                <button class="create-btn" onclick="toLogin()">Write Article</button>
+                <button class="create-btn" onclick="window.location.href='login'">Ask Question</button>
+                <button class="create-btn" onclick="window.location.href='login'">Write Article</button>
             </div>
 
             <div class="sidebar-widget">
@@ -116,5 +115,6 @@
         </aside>
     </div>
 </div>
+<script src="../static/app.js"></script>
 </body>
 </html>

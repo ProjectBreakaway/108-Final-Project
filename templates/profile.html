@@ -5,21 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
     <link rel="stylesheet" href="../static/profile.css">
-    <script src="../static/app.js"></script>
 </head>
 <body>
 <header>
     <div class="container">
         <nav>
-            <a onclick="toUserHomePage()" class="logo">Philosophia</a>
+            <a href="userhome" class="logo">Philosophia</a>
             <div class="main-nav">
-                <a onclick="toUserHomePage()">Home</a>
+                <a href="userhome">Home</a>
                 <a href="#">Topics</a>
                 <a href="#">Library</a>
             </div>
-            <button class="profile-btn" onclick="openUserProfile()">
-                <div class="profile-pic">Ph</div>
-            </button>
+            <a href="profile" style="text-decoration: none;">
+                <button class="profile-btn">
+                    <div class="profile-pic">Ph</div>
+                </button>
+            </a>
         </nav>
     </div>
 </header>
@@ -29,12 +30,12 @@
         <aside class="account-sidebar">
             <h3 class="sidebar-title">My Account</h3>
             <ul class="sidebar-menu">
-                <li><a onclick="openUserProfile()" class="active">Profile</a></li>
+                <li><a href="profile" class="active">Profile</a></li>
                 <li><a href="#">My Questions</a></li>
                 <li><a href="#">My Answers</a></li>
                 <li><a href="#">Following</a></li>
-                <li><a href="settings.html">Settings</a></li>
-                <li><a onclick="logout()">Log Out</a></li>
+                <li><a href="settings">Settings</a></li>
+                <li><a href="index" onclick="logIn()">Log Out</a></li>
             </ul>
         </aside>
 
@@ -51,7 +52,7 @@
                         <p id="description"></p>
                     </div>
                 </div>
-                <button class="edit-btn" onclick="window.location.href='settings.html'">Edit Profile</button>
+                <button class="edit-btn" onclick="window.location.href='settings'">Edit Profile</button>
             </div>
 
             <div class="stats-grid">
@@ -83,5 +84,6 @@
         </main>
     </div>
 </div>
+<script src="../static/app.js"></script>
 </body>
 </html>
