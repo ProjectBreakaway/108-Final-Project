@@ -47,13 +47,13 @@
                     <h3 class="section-header">Basic Information</h3>
 
                     <div class="form-row">
-                        <label for="name">Display Name</label>
-                        <input type="text" id="name" value="John Doe">
+                        <label for="displayed_name_in_settings">Display Name</label>
+                        <input type="text" id="displayed_name_in_settings" value="">
                     </div>
 
                     <div class="form-row">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="philosophical_john">
+                        <label for="email_in_settings">Email</label>
+                        <input type="text" id="email_in_settings" value="">
                     </div>
                 </div>
 
@@ -61,14 +61,14 @@
                     <h3 class="section-header">About Me</h3>
 
                     <div class="form-row">
-                        <label for="bio">Philosophical Bio</label>
-                        <textarea id="bio">Philosophy enthusiast specializing in existentialism and ethics. Currently exploring the intersection of AI and moral philosophy. Believer in Socratic dialogue as a path to truth.</textarea>
+                        <label for="description_in_settings">Philosophical Bio</label>
+                        <textarea id="description_in_settings"></textarea>
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <a href="profile" style="text-decoration: none;" class="cancel-btn">Cancel</a>
-                    <button class="save-btn">Save Changes</button>
+                    <button class="save-btn" onclick="change_user_settings()">Save Changes</button>
                 </div>
 
                 <div class="philosophy-quote">

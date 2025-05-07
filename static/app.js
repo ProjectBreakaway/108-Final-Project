@@ -82,12 +82,17 @@ function signUp() {
 document.addEventListener('DOMContentLoaded',
     function openUserProfile() {
     let username = getCookie('username')
-                    console.log(username)
-
-    fetch(`${url}/profile/${username}`)
+    fetch(`${url}/profile/me`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            })
+        })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('username').innerHTML = data.username;
+            document.getElementById('username').innerHTML = ('(username:    ' + data.username + ')');
+            document.getElementById('displayed_name').innerHTML = data.displayed_name;
             document.getElementById('description').innerHTML = data.description;
             document.getElementById('totalQuestions').innerHTML = data.questions;
             document.getElementById('totalAnswers').innerHTML = data.answers;
@@ -95,6 +100,53 @@ document.addEventListener('DOMContentLoaded',
         })
         .catch(err => console.error(err));
 });
+
+document.addEventListener('DOMContentLoaded',
+    function openUserSettings() {
+    let username = getCookie('username');
+
+    fetch(`${url}/settings/me`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('displayed_name_in_settings').value = data.displayed_name;
+            document.getElementById('email_in_settings').value = data.email;
+            document.getElementById('description_in_settings').value = data.description;
+        })
+        .catch(err => console.error(err));
+});
+
+function change_user_settings() {
+    const displayed_name = document.getElementById('displayed_name_in_settings').value;
+    const email =document.getElementById('email_in_settings').value;
+    const description =document.getElementById('description_in_settings').value;
+    let username = getCookie('username');
+
+    fetch(`${url}/settings/me`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            "displayed_name": displayed_name,
+            "email": email,
+            "description": description,
+            })
+        })
+        .then(response => {
+            if (response.status != 400) {
+                window.location.href = "profile";
+            } else {
+                window.location.href = "settings";
+            }
+            return response.json()
+        })
+        .catch(err => console.error(err));
+}
 
 function logout() {
     document.cookie = `username=; login=`;
