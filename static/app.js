@@ -1,10 +1,9 @@
 const url = "http://127.0.0.1:5000";
-const allCookies = document.cookie;
 
 function logIn() {
     let username_login = document.getElementById("username_login").value;
     let password_login = document.getElementById("password_login").value;
-    fetch(`${url}`, {
+    fetch(`${url}/signin/me`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -17,11 +16,10 @@ function logIn() {
                 document.cookie = `username=${username_login}; login=${true}`;
                 window.location.href = "userhome";
             } else {
-                window.location.href = "login";
+                window.location.href = "signup";
             }
             return response.json()
-        }
-        )
+        })
         .catch(err => console.error(err));
 }
 
@@ -78,7 +76,6 @@ function signUp() {
 }
 
 
-
 document.addEventListener('DOMContentLoaded',
     function openUserProfile() {
     let username = getCookie('username')
@@ -91,7 +88,7 @@ document.addEventListener('DOMContentLoaded',
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('username').innerHTML = ('(username:    ' + data.username + ')');
+            document.getElementById('username_in_profile').innerHTML = ('(username:    ' + data.username + ')');
             document.getElementById('displayed_name').innerHTML = data.displayed_name;
             document.getElementById('description').innerHTML = data.description;
             document.getElementById('totalQuestions').innerHTML = data.questions;

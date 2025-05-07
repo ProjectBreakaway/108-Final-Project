@@ -8,7 +8,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project1.db"
 db = SQLAlchemy(app)
 
-
 def generate_salt():
     return secrets.token_hex(16)
 
@@ -155,7 +154,7 @@ def user_settings():
     return jsonify({"success": "Successfully changed settings"}), 200
 
 
-@app.route('/user/signin', methods=['POST'])
+@app.route('/signin/me/', methods=['POST'])
 def sign_in():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
@@ -173,7 +172,7 @@ def sign_in():
             response = jsonify(user_data)
             response.set_cookie('user_id', str(user_data['username']))
             response.set_cookie('theme', 'dark', max_age=30 * 24 * 60 * 60)
-            return response, 200
+            return jsonify({"success": "User login successfully"}), 200
         else:
             return jsonify({"error": "Incorrect password"}), 400
     else:
