@@ -1,5 +1,6 @@
 const url = "http://127.0.0.1:5000";
 let username = '';
+let login = false;
 
 function logIn() {
     let username_login = document.getElementById("username_login").value;
@@ -7,9 +8,9 @@ function logIn() {
     fetch(`${url}/${username_login}/${password_login}`)
         .then(response => response.json())
         .then(_ => {
-            // change_corner();
             username = username_login;
-            redirectToHomePage();
+            login = true;
+            window.location.href = "userhome.html";
         })
         .catch(err => console.error(err));
 }
@@ -45,7 +46,7 @@ function signUp() {
         showError("Passwords do not match");
         return;
     }
-    console.log('correct before fetch')
+
     fetch(`${url}/create`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -55,51 +56,34 @@ function signUp() {
             })
         })
         .then(response => response.json())
-        .then(_ => {
-            // change_corner();
+        .then(data => {
+            console.log(data)
             username = username_signup;
-            redirectToHomePage();
+            login = true;
+            console.log(username);
+            window.location.href = "userhome.html";
         })
         .catch(err => console.error(err));
 }
 
-function change_corner(){
-    const corner = document.getElementById("rightTopCorner");
-    corner.innerHTML = `
-        <style>
-            #rightTopCorner .profile-btn {
-                background: none;
-                border: none;
-                padding: 0;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            #rightTopCorner .profile-btn:hover .profile-pic {
-                transform: scale(1.05);
-                box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.3);
-            }
-            
-            #rightTopCorner .profile-pic {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                background-color: #0084ff;
-                color: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                transition: all 0.2s ease;
-            }
-        </style>
-        <button class="profile-btn" onclick="window.location.href='profile.html'">
-            <div class="profile-pic">Ph</div>
-        </button>`;
+function openUserProfile() {
+    console.log(username)
+    console.log(login)
+    fetch(`${url}/profile/${username}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            window.location.href = "profile.html";
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('description').textContent = data.description;
+            document.getElementById('totalQuestions').textContent = data.questions;
+            document.getElementById('totalAnswers').textContent = data.answers;
+            document.getElementById('totalLike').textContent = data.liked;
+        })
+    .catch(err => console.error(err));
 }
 
-function redirectToHomePage() {
-    window.location.href = "index.html";
+function logout() {
+    username = '';
+    login = false;
 }

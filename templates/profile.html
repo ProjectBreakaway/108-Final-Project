@@ -11,14 +11,14 @@
 <header>
     <div class="container">
         <nav>
-            <a href="index.html" class="logo">Philosophia</a>
+            <a href="userhome.html" class="logo">Philosophia</a>
             <div class="main-nav">
-                <a href="index.html">Home</a>
+                <a href="userhome.html">Home</a>
                 <a href="#">Topics</a>
                 <a href="#">Library</a>
             </div>
-            <button class="profile-btn" onclick="window.location.href='profile.html'">
-                <div class="profile-pic">JD</div>
+            <button class="profile-btn" onclick="openUserProfile()">
+                <div class="profile-pic">Ph</div>
             </button>
         </nav>
     </div>
@@ -29,12 +29,12 @@
         <aside class="account-sidebar">
             <h3 class="sidebar-title">My Account</h3>
             <ul class="sidebar-menu">
-                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a onclick="openUserProfile()" class="active">Profile</a></li>
                 <li><a href="#">My Questions</a></li>
                 <li><a href="#">My Answers</a></li>
                 <li><a href="#">Following</a></li>
                 <li><a href="settings.html">Settings</a></li>
-                <li><a href="index.html">Log Out</a></li>
+                <li><a href="index.html" onclick="logIn()">Log Out</a></li>
             </ul>
         </aside>
 
@@ -44,29 +44,27 @@
             </div>
 
             <div class="profile-section">
-                <div class="profile-avatar">JD</div>
+                <div class="profile-avatar">Ph</div>
                 <div class="profile-info">
-                    <h2>John Doe</h2>
+                    <h2 id="username"></h2>
                     <div class="profile-description">
-                        <p>Philosophy enthusiast specializing in existentialism and ethics. Currently exploring the
-                            intersection of AI and moral philosophy. Believer in Socratic dialogue as a path to
-                            truth.</p>
+                        <p id="description"></p>
                     </div>
                 </div>
-                <button class="edit-btn">Edit Profile</button>
+                <button class="edit-btn" onclick="window.location.href='settings.html'">Edit Profile</button>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <p class="stat-number">142</p>
+                    <p class="stat-number" id="totalQuestions"></p>
                     <p class="stat-label">Questions</p>
                 </div>
                 <div class="stat-card">
-                    <p class="stat-number">327</p>
+                    <p class="stat-number" id="totalAnswers"></p>
                     <p class="stat-label">Answers</p>
                 </div>
                 <div class="stat-card">
-                    <p class="stat-number">1.2k</p>
+                    <p class="stat-number" id="totalLike"></p>
                     <p class="stat-label">Liked</p>
                 </div>
             </div>
