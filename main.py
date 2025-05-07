@@ -2,9 +2,10 @@ from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import secrets
+import bcrypt
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project1.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
 db = SQLAlchemy(app)
 
 def generate_salt():
@@ -39,7 +40,7 @@ class Answer(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), unique=True, nullable=False)
-    password = db.Column(db.String(), nullable=False)
+    hashed_password = db.Column(db.String(), nullable=False)
     salt = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
 
@@ -54,28 +55,32 @@ with app.app_context():
 def index():
     return render_template("index.html")
 
-@app.route('/index.html')
+@app.route('/index')
 def home():
     return render_template("index.html")
 
-@app.route('/userhome.html')
+@app.route('/userhome')
 def userhome():
     return render_template("userhome.html")
 
-@app.route('/login.html')
+@app.route('/login')
 def login():
     return render_template("login.html")
 
-@app.route('/signup.html')
+@app.route('/signup')
 def create_user_html():
     return render_template("signup.html")
 
-@app.route('/profile.html')
+@app.route('/profile')
 def profile():
     return render_template("profile.html")
 
-@app.route('/profile/<string:username>')
-def my_profile(username):
+@app.route('/settings')
+def settings():
+    return render_template("settings.html")
+
+@app.route('/profile/<username>')
+def user_profile(username):
     user = User.query.filter_by(username=username).first()
     user_questions = Question.query.filter_by(user_id=user.id).all()
     user_answers = Answer.query.filter_by(user_id=user.id).all()
@@ -92,20 +97,29 @@ def my_profile(username):
         'liked': liked
     })
 
-@app.route('/settings.html')
-def settings():
-    return render_template("settings.html")
+@app.route('/user/signin', methods=['POST'])
+def sign_in():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
 
-@app.route('/<string:username>/<string:password>')
-def sign_in(username, password):
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+
     if User.query.filter_by(username=username).first():
         user = User.query.filter_by(username=username).first()
-        if (password + user.salt) == user.password:
-            return jsonify({"success": "User login successfully"}), 201
+        input_password = password + user.salt
+        input_password = bytes(input_password, encoding="utf-8")
+        if bcrypt.checkpw(input_password, user.hashed_password):
+            user_data = {"username": username}
+            response = jsonify(user_data)
+            response.set_cookie('user_id', str(user_data['username']))
+            response.set_cookie('theme', 'dark', max_age=30 * 24 * 60 * 60)
+            return response, 200
         else:
-            return jsonify({"error": "Incorrect password"}), 401
+            return jsonify({"error": "Incorrect password"}), 400
     else:
-        return jsonify({"error": "No username found"}), 402
+        return jsonify({"error": "No username found"}), 400
 
 
 @app.route("/create/", methods=["POST"])
@@ -115,13 +129,15 @@ def create_user():
     password = data["password"]
 
     if User.query.filter_by(username=username).first():
-        return jsonify({"error": "User already exist"}), 404
+        return jsonify({"error": "User already exist"}), 400
     salt = generate_salt()
     password = password + salt
+    password = bytes(password, encoding="utf-8")
+    hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
 
     user = User(
         username=username,
-        password=password,
+        hashed_password=hashed_password,
         salt=salt,
     )
     db.session.add(user)

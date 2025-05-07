@@ -5,20 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
     <link rel="stylesheet" href="../static/settings.css">
-    <script src="../static/app.js"></script>
 </head>
 <body>
 <header>
     <div class="container">
         <nav>
-            <a href="userhome.html" class="logo">Philosophia</a>
+            <a href="userhome" class="logo">Philosophia</a>
             <div class="main-nav">
-                <a href="userhome.html">Home</a>
+                <a href="userhome">Home</a>
                 <a href="#">Topics</a>
                 <a href="#">Library</a>
             </div>
-            <button class="profile-btn" onclick="window.location.href='profile.html'">
-                <div class="profile-pic">JD</div>
+            <button class="profile-btn" onclick="window.location.href='profile'">
+                <div class="profile-pic">Ph</div>
             </button>
         </nav>
     </div>
@@ -29,12 +28,12 @@
         <aside class="account-sidebar">
             <h3 class="sidebar-title">My Account</h3>
             <ul class="sidebar-menu">
-                <li><a onclick="openUserProfile()">Profile</a></li>
+                <li><a href="profile">Profile</a></li>
                 <li><a href="#">My Questions</a></li>
                 <li><a href="#">My Answers</a></li>
                 <li><a href="#">Following</a></li>
-                <li><a href="settings.html" class="active">Settings</a></li>
-                <li><a href="index.html" onclick="logout()">Log Out</a></li>
+                <li><a href="settings" class="active">Settings</a></li>
+                <li><a href="index" onclick="logout()">Log Out</a></li>
             </ul>
         </aside>
 
@@ -68,7 +67,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <a href="profile.html" style="text-decoration: none;" class="cancel-btn">Cancel</a>
+                    <a href="profile" style="text-decoration: none;" class="cancel-btn">Cancel</a>
                     <button class="save-btn">Save Changes</button>
                 </div>
 
@@ -79,5 +78,6 @@
         </main>
     </div>
 </div>
+<script src="../static/app.js"></script>
 </body>
 </html>

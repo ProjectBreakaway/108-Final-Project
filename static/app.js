@@ -1,17 +1,27 @@
 const url = "http://127.0.0.1:5000";
-let username = '';
-let login = false;
+const allCookies = document.cookie;
 
 function logIn() {
     let username_login = document.getElementById("username_login").value;
     let password_login = document.getElementById("password_login").value;
-    fetch(`${url}/${username_login}/${password_login}`)
-        .then(response => response.json())
-        .then(_ => {
-            username = username_login;
-            login = true;
-            window.location.href = "userhome.html";
+    fetch(`${url}`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username_login,
+            "password": password_login,
+            })
         })
+        .then(response => {
+            if (response.status != 400) {
+                document.cookie = `username=${username_login}; login=${true}`;
+                window.location.href = "userhome";
+            } else {
+                window.location.href = "login";
+            }
+            return response.json()
+        }
+        )
         .catch(err => console.error(err));
 }
 
@@ -55,35 +65,48 @@ function signUp() {
             "password": password_signup,
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            username = username_signup;
-            login = true;
-            console.log(username);
-            window.location.href = "userhome.html";
+        .then(response => {
+            if (response.status != 400) {
+                document.cookie = `username=${username_signup}; login=${true}`;
+                window.location.href = "userhome";
+            } else {
+                window.location.href = "signup";
+            }
+            return response.json()
         })
         .catch(err => console.error(err));
 }
 
-function openUserProfile() {
-    console.log(username)
-    console.log(login)
+
+
+document.addEventListener('DOMContentLoaded',
+    function openUserProfile() {
+    let username = getCookie('username')
+                    console.log(username)
+
     fetch(`${url}/profile/${username}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
-            window.location.href = "profile.html";
-            document.getElementById('username').textContent = data.username;
-            document.getElementById('description').textContent = data.description;
-            document.getElementById('totalQuestions').textContent = data.questions;
-            document.getElementById('totalAnswers').textContent = data.answers;
-            document.getElementById('totalLike').textContent = data.liked;
+            document.getElementById('username').innerHTML = data.username;
+            document.getElementById('description').innerHTML = data.description;
+            document.getElementById('totalQuestions').innerHTML = data.questions;
+            document.getElementById('totalAnswers').innerHTML = data.answers;
+            document.getElementById('totalLike').innerHTML = data.liked;
         })
-    .catch(err => console.error(err));
-}
+        .catch(err => console.error(err));
+});
 
 function logout() {
-    username = '';
-    login = false;
+    document.cookie = `username=; login=`;
+}
+
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [cookieName, cookieValue] = cookie.trim().split('=');
+        if (cookieName === name) {
+            return decodeURIComponent(cookieValue);
+        }
+    }
+    return null;
 }
