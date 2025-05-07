@@ -11,11 +11,11 @@
 <header>
     <div class="container">
         <nav>
-            <a href="index.html" style="text-decoration: none;">
+            <a onclick="toHome()" style="text-decoration: none;">
                 <h1 class="logo">Philosophia</h1>
             </a>
             <div class="main-nav">
-                <a href="index.html">Home</a>
+                <a onclick="toHome()">Home</a>
                 <a href="#">Topics</a>
                 <a href="#">Library</a>
             </div>
@@ -24,8 +24,8 @@
                 <button class="search-button">Search</button>
             </div>
             <div id="rightTopCorner">
-                <a href="login.html" style="text-decoration: none;" class="login-btn">Log in</a>
-                <a href="signup.html" style="text-decoration: none;" class="login-btn">Sign up</a>
+                <a onclick="toLogin()" style="text-decoration: none;" class="login-btn">Log in</a>
+                <a onclick="toSignup()" style="text-decoration: none;" class="login-btn">Sign up</a>
             </div>
         </nav>
     </div>
@@ -35,8 +35,8 @@
     <div class="content">
         <main class="main-content">
             <div class="feed-tabs">
-                <div class="feed-tab active" onclick="window.location.href='index.html'">Recommended</div>
-                <div class="feed-tab" onclick="window.location.href='login.html'">Following</div>
+                <div class="feed-tab active" onclick="toHome()">Recommended</div>
+                <div class="feed-tab" onclick="toLogin()">Following</div>
             </div>
 
             <div class="question-card">
@@ -90,8 +90,8 @@
         <aside class="sidebar">
             <div class="sidebar-widget">
                 <h3 class="widget-title">Create Content</h3>
-                <button class="create-btn" onclick="window.location.href='login.html'">Ask Question</button>
-                <button class="create-btn" onclick="window.location.href='login.html'">Write Article</button>
+                <button class="create-btn" onclick="toLogin()">Ask Question</button>
+                <button class="create-btn" onclick="toLogin()">Write Article</button>
             </div>
 
             <div class="sidebar-widget">

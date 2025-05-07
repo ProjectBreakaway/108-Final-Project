@@ -54,19 +54,15 @@ with app.app_context():
 def index():
     return render_template("index.html")
 
-@app.route('/index.html')
-def home():
-    return render_template("index.html")
-
-@app.route('/userhome.html')
+@app.route('/userhome')
 def userhome():
     return render_template("userhome.html")
 
-@app.route('/login.html')
+@app.route('/login')
 def login():
     return render_template("login.html")
 
-@app.route('/signup.html')
+@app.route('/signup')
 def create_user_html():
     return render_template("signup.html")
 

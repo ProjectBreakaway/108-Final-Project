@@ -84,6 +84,59 @@ function openUserProfile() {
 }
 
 function logout() {
+    fetch(`${url}/`)
+        .then(response => response.text())
+        .then(data => {
+            document.open();
+            document.write(data);
+            document.close();
+        })
+        .catch(err => console.error(err));
     username = '';
     login = false;
+}
+
+function toHome() {
+    fetch(`${url}/`)
+        .then(response => response.text())
+        .then(data => {
+            document.open();
+            document.write(data);
+            document.close();
+        })
+        .catch(err => console.error(err));
+}
+
+
+function toUserHomePage(){
+    fetch(`${url}/userhome`)
+        .then(response => response.text())
+        .then(data => {
+            document.open();
+            document.write(data);
+            document.close();
+        })
+        .catch(err => console.error(err));
+}
+
+function toLogin() {
+    fetch(`${url}/login`)
+        .then(response => response.text())
+        .then(data => {
+            document.open();
+            document.write(data);
+            document.close();
+        })
+        .catch(err => console.error(err));
+}
+
+function toSignup() {
+    fetch(`${url}/signup`)
+        .then(response => response.text())
+        .then(data => {
+            document.open();
+            document.write(data);
+            document.close();
+        })
+        .catch(err => console.error(err));
 }
