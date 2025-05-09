@@ -1,11 +1,12 @@
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 import secrets
 import bcrypt
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project1.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
 db = SQLAlchemy(app)
 
 question_tags = db.Table('question_tags',
@@ -119,6 +120,9 @@ def my_question():
 def my_answer():
     return render_template("myAnswers.html")
 
+@app.route('/questionwithanswers')
+def question_with_answers():
+    return render_template('questionAndAnswers.html')
 
 @app.route('/profile/me', methods=['POST'])
 def user_profile():
@@ -156,7 +160,10 @@ def all_questions_asked():
     question_dict = {}
     for question in my_questions:
         total_answers = Answer.query.filter_by(question_id=question.id).count()
-        question_dict[question.title] = [question.content, total_answers, question.timestamp, question.upvotes]
+        question_dict[question.title] = [question.content,
+                                         total_answers,
+                                         question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                                         question.upvotes]
     return jsonify(question_dict), 200
 
 @app.route('/answers/me', methods=['POST'])
@@ -171,7 +178,7 @@ def all_answers():
     answer_dict = {}
     for answer in my_answers:
         question_title = Question.query.filter_by(id=answer.question_id).first().title
-        answer_dict[question_title] = [answer.content, answer.timestamp, answer.upvotes]
+        answer_dict[question_title] = [answer.content, answer.timestamp.strftime("%Y-%m-%d %H:%M:%S"), answer.upvotes]
     return jsonify(answer_dict), 200
 
 
@@ -210,8 +217,8 @@ def user_settings():
     return jsonify({"success": "Successfully changed settings"}), 200
 
 
-@app.route('/signin/me/', methods=['POST'])
-def sign_in():
+@app.route('/login/me', methods=['POST'])
+def login_me():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
@@ -266,11 +273,6 @@ def create_questions():
 
     data = request.get_json()
 
-    required_fields = ["title", "content", "username"]
-    for field in required_fields:
-        if field not in data:
-            return jsonify({"error": f"Missing required field: {field}"}), 400
-
     user = User.query.filter_by(username=data["username"]).first()
     if not user:
         return jsonify({"error": "User not found"}), 400
@@ -300,15 +302,43 @@ def create_answers():
         return jsonify({"error": "Request must be JSON"}), 400
 
     data = request.get_json()
-    content = data["content"]
-    question_title = data["question_title"]
-    question_initiator_id = User.query.filter_by(username=data["question_initiator"]).first().id
-    question = Question.query.filter_by(title=question_title, user_id=question_initiator_id).first()
-    user_id = User.query.filter_by(username=data["user_id"]).first().id
-    answer = Answer(content=content, user_id=user_id, question_id=question.id)
+
+    user = User.query.filter_by(username=data["username"]).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 400
+
+    question_id = Question.query.filter_by(title=data["question_title"]).first().id
+    answer = Answer(
+        question_id=question_id,
+        content=data["answer_content"],
+        user_id=user.id
+    )
+
     db.session.add(answer)
     db.session.commit()
-    return jsonify({"success": "Answer created successfully"}), 200
+    return jsonify({"success": "Answer created successfully"}), 201
+
+@app.route('/question/detail', methods=['POST'])
+def question_detail():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    question_title = data["question_title"]
+    question = Question.query.filter_by(title=question_title).first()
+    user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
+    total_answers = Answer.query.filter_by(question_id=question.id).count()
+    tags = [{"id": tag.id, "name": tag.name, "description": tag.description} for tag in question.tags]
+    return jsonify({
+        "title": question.title,
+        "question_content": question.content,
+        "user_displayed_name": user_displayed_name,
+        "question_total_answers": total_answers,
+        "upvotes": question.upvotes,
+        "question_timestamp": question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+        "tags": tags,
+    }), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
