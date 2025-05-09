@@ -111,6 +111,15 @@ def ask_question():
 def write_article():
     return render_template("writeArticle.html")
 
+@app.route('/myquestions')
+def my_question():
+    return render_template("myQuestions.html")
+
+@app.route('/myanswers')
+def my_answer():
+    return render_template("myAnswers.html")
+
+
 @app.route('/profile/me', methods=['POST'])
 def user_profile():
     if not request.is_json:
@@ -134,6 +143,36 @@ def user_profile():
         'answers': len(user_answers),
         'liked': liked
     }), 200
+
+@app.route('/questions/me', methods=['POST'])
+def all_questions_asked():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    username = data["username"]
+    user = User.query.filter_by(username=username).first()
+    my_questions = Question.query.filter_by(user_id=user.id).all()
+    question_dict = {}
+    for question in my_questions:
+        total_answers = Answer.query.filter_by(question_id=question.id).count()
+        question_dict[question.title] = [question.content, total_answers, question.timestamp, question.upvotes]
+    return jsonify(question_dict), 200
+
+@app.route('/answers/me', methods=['POST'])
+def all_answers():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    username = data["username"]
+    user = User.query.filter_by(username=username).first()
+    my_answers = Answer.query.filter_by(user_id=user.id).all()
+    answer_dict = {}
+    for answer in my_answers:
+        question_title = Question.query.filter_by(id=answer.question_id).first().title
+        answer_dict[question_title] = [answer.content, answer.timestamp, answer.upvotes]
+    return jsonify(answer_dict), 200
 
 
 @app.route('/settings/me', methods=['POST', 'PUT'])

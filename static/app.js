@@ -117,6 +117,71 @@ document.addEventListener('DOMContentLoaded',
         .catch(err => console.error(err));
 });
 
+document.addEventListener('DOMContentLoaded',
+    function displayQuestionsAsked() {
+    let username = getCookie('username');
+
+    fetch(`${url}/questions/me`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const questions_body = document.getElementById('questions_body')
+            questions_body.innerHTML = '';
+            for (const [title, [content, total_answers, timestamp, upvotes]] of Object.entries(data)) {
+                const item = `<li class="question-item">
+                    <h3 class="question-title"><a href="#">${title}</a></h3>
+                    <p class="question-excerpt">${content}</p>
+                    <div class="question-meta">
+                    <span class="question-stat">${upvotes} approval</span>
+                    <span class="question-stat">${total_answers} comments</span>
+                    <span class="question-stat">${timestamp}</span>
+                    </div>
+                </li>`;
+                questions_body.innerHTML += item;
+            }
+        })
+        .catch(err => console.error(err));
+});
+
+document.addEventListener('DOMContentLoaded',
+    function displayAnswers() {
+    let username = getCookie('username');
+
+    fetch(`${url}/answers/me`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const answers_body = document.getElementById('answers_body')
+            answers_body.innerHTML = '';
+            for (const [question_title, [content, timestamp, upvotes]] of Object.entries(data)) {
+                const item = `<li class="answer-item">
+                    <p class="answer-question">In response to: <a href="#">"${question_title}"</a></p>
+                    <div class="answer-content">
+                        <p>${content}</p>
+                    </div>
+                    <div class="answer-meta">
+                        <span class="answer-stat">${upvotes} approval</span>
+                        <span class="answer-stat">${timestamp}</span>
+                        <button class="action-btn">Edit</button>
+                        <button class="action-btn">Delete</button>
+                    </div>
+                </li>`;
+                answers_body.innerHTML += item;
+            }
+        })
+        .catch(err => console.error(err));
+});
+
 function change_user_settings() {
     const displayed_name = document.getElementById('displayed_name_in_settings').value;
     const email =document.getElementById('email_in_settings').value;

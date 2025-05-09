@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Questions - Philosophia</title>
+    <link rel="stylesheet" href="../static/myQuestions.css">
+</head>
+<body>
+<header>
+    <div class="container">
+        <nav>
+            <a href="userhome" class="logo">Philosophia</a>
+            <div class="main-nav">
+                <a href="userhome">Home</a>
+                <a href="#">Topics</a>
+                <a href="#">Library</a>
+            </div>
+            <a href="profile" style="text-decoration: none;">
+                <button class="profile-btn">
+                    <div class="profile-pic">Ph</div>
+                </button>
+            </a>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <div class="account-container">
+        <aside class="account-sidebar">
+            <h3 class="sidebar-title">My Account</h3>
+            <ul class="sidebar-menu">
+                <li><a href="profile">Profile</a></li>
+                <li><a href="myquestions"  class="active">My Questions</a></li>
+                <li><a href="myanswers">My Answers</a></li>
+                <li><a href="#">Following</a></li>
+                <li><a href="settings">Settings</a></li>
+                <li><a href="index" onclick="logIn()">Log Out</a></li>
+            </ul>
+        </aside>
+
+        <main class="questions-main">
+            <div class="account-header">
+                <h1 class="account-title">My Questions</h1>
+            </div>
+            <ul class="question-list" id="questions_body">
+            </ul>
+        </main>
+    </div>
+</div>
+<script src="../static/app.js"></script>
+</body>
+</html>
