@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded',
         fetchAndDisplayQuestions('upvotes');
 
         sortButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 sortButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded',
         fetchAndDisplayQuestions('upvotes');
 
         sortButtons.forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 sortButtons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
@@ -180,20 +180,20 @@ document.addEventListener('DOMContentLoaded',
         });
 
         function fetchAndDisplayQuestions(sortMethod) {
-                    fetch(`${url}/answers/me`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                "username": username,
-                sort: sortMethod
+            fetch(`${url}/answers/me`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    "username": username,
+                    sort: sortMethod
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                const answers_body = document.getElementById('answers_body')
-                answers_body.innerHTML = '';
-                for (const [_, [question_title, answer_content, timestamp, upvotes]] of Object.entries(data)) {
-                    const item = `<li class="answer-item">
+                .then(response => response.json())
+                .then(data => {
+                    const answers_body = document.getElementById('answers_body')
+                    answers_body.innerHTML = '';
+                    for (const [_, [question_title, answer_content, timestamp, upvotes]] of Object.entries(data)) {
+                        const item = `<li class="answer-item">
                     <p class="answer-question">In response to: <a onclick="openQuestion('${question_title}')">${question_title}</a></p>
                     <div class="answer-content">
                         <p>${answer_content}</p>
@@ -205,22 +205,24 @@ document.addEventListener('DOMContentLoaded',
                         <button class="action-btn">Delete</button>
                     </div>
                 </li>`;
-                    answers_body.innerHTML += item;
-                }
-            })
-            .catch(err => console.error(err));
+                        answers_body.innerHTML += item;
+                    }
+                })
+                .catch(err => console.error(err));
         }
     });
 
 document.addEventListener('DOMContentLoaded',
     function displayQuestionDetail() {
         let question_title = getCookie('question_title');
+        let current_username = getCookie('username')
 
         fetch(`${url}/question/detail`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 "question_title": question_title,
+                "current_username": current_username,
             })
         })
             .then(response => response.json())
@@ -238,7 +240,16 @@ document.addEventListener('DOMContentLoaded',
                 question_content.innerHTML = data["question_content"]
 
                 const question_upvotes = document.getElementById('question_upvotes')
-                question_upvotes.innerHTML = data["question_upvotes"] + " Approval"
+                question_upvotes.innerHTML = data["upvotes"] + " Approval"
+
+                const like_button = document.getElementById("like_button")
+                if (data["has_upvoted"] === true || data["same_person"] === true) {
+                    like_button.classList.remove("active");
+                    like_button.disabled = false;
+                } else {
+                    like_button.classList.add("active");
+                    like_button.disabled = true;
+                }
 
                 const question_total_answers = document.getElementById('question_total_answers')
                 question_total_answers.innerHTML = data["question_total_answers"] + " Answers"
@@ -251,6 +262,63 @@ document.addEventListener('DOMContentLoaded',
                 }
             })
             .catch(err => console.error(err));
+    });
+
+document.addEventListener('DOMContentLoaded',
+    function displayAnswersDetail() {
+        let question_title = getCookie('question_title');
+
+        const sortButtons = document.querySelectorAll('.sort-btn');
+        fetchAndDisplayQuestions('upvotes');
+
+        sortButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                sortButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                fetchAndDisplayQuestions(this.dataset.sort);
+            });
+        });
+
+        function fetchAndDisplayQuestions(sortMethod) {
+            fetch(`${url}/answers/detail`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                "question_title": question_title,
+                "sort": sortMethod
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                const all_answers = document.getElementById("all_answers");
+                all_answers.innerHTML = "";
+
+                for (const [_, [answerer_name, answer_content, timestamp, upvotes]] of Object.entries(data)) {
+                        const item = `<div class="answer-header">
+                    <div class="answer-author">
+                        <div class="answer-avatar">Ph</div>
+                        <div class="answer-info">
+                            <h4>${answerer_name}</h4>
+                        </div>
+                    </div>
+                    <span class="answer-time">${timestamp}</span>
+                </div>
+
+                <div class="answer-content">
+                    <p>${answer_content}</p>
+                </div>
+                <div class="answer-actions">
+                    <button class="action-btn">${upvotes} Approval</button>
+                    <button class="action-btn">❤ Like</button>
+                </div>`;
+                        all_answers.innerHTML += item;
+                    }
+            })
+                .catch(err => console.error(err));
+        }
+
     });
 
 function change_user_settings() {
@@ -430,7 +498,10 @@ function openQuestion(question_title) {
     fetch(`${url}/question/detail`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({"question_title": question_title})
+        body: JSON.stringify({
+            "question_title": question_title,
+            "current_username": getCookie('username')
+        })
     })
         .then(response => {
             window.location.href = "questionwithanswers";
@@ -504,17 +575,4 @@ function getCookie(name) {
         }
     }
     return null;
-}
-
-
-function appendToCookie(name, value) {
-  const currentCookie = document.cookie
-    .split('; ')
-    .find(row => row.startsWith(`${name}=`));
-
-  const newValue = currentCookie
-    ? `${currentCookie.split('=')[1]}|${value}`
-    : value;
-
-  document.cookie = `${name}=${encodeURIComponent(newValue)}; path=/`;
 }

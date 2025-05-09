@@ -14,10 +14,16 @@ question_tags = db.Table('question_tags',
     db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
 )
 
+question_upvotes = db.Table('question_upvotes',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('question.id'), primary_key=True),
+)
+
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
     description = db.Column(db.String(200))
+
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,6 +55,28 @@ class User(db.Model):
 
     questions = db.relationship('Question', backref='author', lazy=True)
     answers = db.relationship('Answer', backref='author', lazy=True)
+    upvoted_questions = db.relationship('Question',
+        secondary=question_upvotes,
+        backref=db.backref('upvoters', lazy='dynamic'),
+        lazy='dynamic'
+    )
+
+    def upvote_question(self, question):
+        if not self.has_upvoted_question(question):
+            self.upvoted_questions.append(question)
+            question.upvotes += 1
+            db.session.commit()
+
+    def remove_upvote(self, question):
+        if self.has_upvoted_question(question):
+            self.upvoted_questions.remove(question)
+            question.upvotes -= 1
+            db.session.commit()
+
+    def has_upvoted_question(self, question):
+        return self.upvoted_questions.filter(
+            question_upvotes.c.question_id == question.id
+        ).count() > 0
 
 
 with app.app_context():
@@ -331,7 +359,37 @@ def create_answers():
     )
     db.session.add(answer)
     db.session.commit()
-    return jsonify({"success": "Answer created successfully"}), 20
+    return jsonify({"success": "Answer created successfully"}), 200
+
+@app.route("/approval/question", methods=["PUT"])
+def approval_questions():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    user = User.query.filter_by(username=data["username"]).first()
+    question = Question.query.filter_by(title=data["question_title"]).first()
+    if user.has_upvoted_question(question):
+        user.remove_upvote(question)
+    else:
+        user.upvote_question(question)
+    return jsonify({"upvote": question.upvotes}), 200
+
+# @app.route("/disapproval/question", methods=["PUT"])
+# def disapproval_questions():
+#     if not request.is_json:
+#         return jsonify({"error": "Request must be JSON"}), 400
+#
+#     data = request.get_json()
+#     user = User.query.filter_by(username=data["username"]).first()
+#     question = Question.query.filter_by(title=data["question_title"]).first()
+#     if user.id != question.user_id:
+#         question.upvotes -= 1
+#         db.session.commit()
+#         return jsonify({"success": "Question disapproved successfully"}), 200
+#     else:
+#         return jsonify({"error": "User cannot disapprove his own question"}), 400
+
 
 @app.route('/question/detail', methods=['POST'])
 def question_detail():
@@ -340,10 +398,12 @@ def question_detail():
 
     data = request.get_json()
     question_title = data["question_title"]
+    current_user = User.query.filter_by(username=data["current_username"]).first()
     question = Question.query.filter_by(title=question_title).first()
     user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
     total_answers = Answer.query.filter_by(question_id=question.id).count()
     tags = [{"id": tag.id, "name": tag.name, "description": tag.description} for tag in question.tags]
+    has_upvoted = current_user.has_upvoted_question(question)
     return jsonify({
         "title": question.title,
         "question_content": question.content,
@@ -352,8 +412,35 @@ def question_detail():
         "upvotes": question.upvotes,
         "question_timestamp": question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         "tags": tags,
+        "has_upvoted": has_upvoted,
+        "same_person": question.user_id == current_user.id,
     }), 200
 
+
+@app.route('/answers/detail', methods=['POST'])
+def answers_detail():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    question_title = data["question_title"]
+    sort_method = data["sort"]
+    question = Question.query.filter_by(title=question_title).first()
+    if sort_method == "newest":
+        answers_to_question = Answer.query.filter_by(question_id=question.id).order_by(desc(Answer.timestamp)).all()
+    elif sort_method == "oldest":
+        answers_to_question = Answer.query.filter_by(question_id=question.id).order_by(Answer.timestamp).all()
+    elif sort_method == "upvotes":
+        answers_to_question = Answer.query.filter_by(question_id=question.id).order_by(desc(Answer.upvotes)).all()
+    else:
+        answers_to_question = Answer.query.filter_by(question_id=question.id).order_by(desc(Answer.timestamp)).all()
+    answer_dict = {}
+    i = 0
+    for answer in answers_to_question:
+        answer_user = User.query.filter_by(id=answer.user_id).first()
+        answer_dict[i] = [answer_user.displayed_name ,answer.content, answer.timestamp.strftime("%Y-%m-%d %H:%M:%S"), answer.upvotes]
+        i += 1
+    return jsonify(answer_dict), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
