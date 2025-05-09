@@ -8,30 +8,25 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project1.db"
 db = SQLAlchemy(app)
 
-def generate_salt():
-    return secrets.token_hex(16)
+question_tags = db.Table('question_tags',
+    db.Column('question_id', db.Integer, db.ForeignKey('question.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+)
 
-
-def hash_password(password: str, salt: str) -> str:
-    salted_password = salt + password
-    return hex(hash(salted_password))[2:]
-
-
-def verify_password(stored_hash: str, stored_salt: str, input_password: str) -> bool:
-    test_hash = hash_password(input_password, stored_salt)
-    return secrets.compare_digest(stored_hash, test_hash)
-
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False, unique=True)
+    description = db.Column(db.String(200))
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime)
-
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     upvotes = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     answers = db.relationship('Answer', backref='question', lazy=True)
-
+    tags = db.relationship('Tag', secondary=question_tags, lazy='subquery', backref=db.backref('questions', lazy=True))
 
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,6 +53,21 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
+    if not Tag.query.first():
+        initial_tags = [
+            Tag(name='ethics', description='Moral philosophy questions'),
+            Tag(name='metaphysics', description='Nature of reality and existence'),
+            Tag(name='epistemology', description='Theory of knowledge'),
+            Tag(name='political', description='Political philosophy'),
+            Tag(name='logic', description='Reasoning and argumentation'),
+            Tag(name='aesthetics', description='Philosophy of art and beauty'),
+            Tag(name='philosophy-of-mind', description='Consciousness and mental phenomena')
+        ]
+        db.session.add_all(initial_tags)
+        db.session.commit()
+
+def generate_salt():
+    return secrets.token_hex(16)
 
 @app.route('/')
 def index():
@@ -93,6 +103,9 @@ def profile():
 def settings():
     return render_template("settings.html")
 
+@app.route('/question')
+def ask_question():
+    return render_template("askQuestion.html")
 
 @app.route('/profile/me', methods=['POST'])
 def user_profile():
@@ -179,7 +192,7 @@ def sign_in():
         return jsonify({"error": "No username found"}), 400
 
 
-@app.route("/create/", methods=["POST"])
+@app.route("/create/user", methods=["POST"])
 def create_user():
     data = request.get_json()
     username = data["username"]
@@ -202,6 +215,57 @@ def create_user():
     db.session.commit()
     return jsonify({"success": "User created successfully"}), 200
 
+
+@app.route("/create/question", methods=["POST"])
+def create_questions():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+
+    required_fields = ["title", "content", "username"]
+    for field in required_fields:
+        if field not in data:
+            return jsonify({"error": f"Missing required field: {field}"}), 400
+
+    user = User.query.filter_by(username=data["username"]).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 400
+
+    question = Question(
+        title=data["title"],
+        content=data["content"],
+        user_id=user.id
+    )
+    db.session.add(question)
+
+    if "tags" in data and isinstance(data["tags"], list):
+        for tag_name in data["tags"]:
+            tag = Tag.query.filter_by(name=tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                db.session.add(tag)
+            question.tags.append(tag)
+
+    db.session.commit()
+    return jsonify({"success": "Question created successfully"}), 201
+
+
+@app.route("/create/answer", methods=["POST"])
+def create_answers():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    content = data["content"]
+    question_title = data["question_title"]
+    question_initiator_id = User.query.filter_by(username=data["question_initiator"]).first().id
+    question = Question.query.filter_by(title=question_title, user_id=question_initiator_id).first()
+    user_id = User.query.filter_by(username=data["user_id"]).first().id
+    answer = Answer(content=content, user_id=user_id, question_id=question.id)
+    db.session.add(answer)
+    db.session.commit()
+    return jsonify({"success": "Answer created successfully"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

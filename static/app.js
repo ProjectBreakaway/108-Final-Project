@@ -55,7 +55,7 @@ function signUp() {
         return;
     }
 
-    fetch(`${url}/create`, {
+    fetch(`${url}/create/user`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -74,7 +74,6 @@ function signUp() {
         })
         .catch(err => console.error(err));
 }
-
 
 document.addEventListener('DOMContentLoaded',
     function openUserProfile() {
@@ -144,6 +143,102 @@ function change_user_settings() {
         })
         .catch(err => console.error(err));
 }
+
+function createQuestion() {
+    const question_title = document.getElementById('question_title').value.trim();
+    const question_content = document.getElementById('question_content').value.trim();
+    const error_element = document.getElementById("title_error");
+    let username = getCookie('username');
+
+    function showError(message) {
+        error_element.textContent = message;
+        error_element.style.display = "block";
+        error_element.style.color = "#e74c3c";
+    }
+
+    if (!question_title) {
+        showError("Question title cannot be empty");
+        return;
+    }
+
+    const tagElements = document.querySelectorAll('.tags-input .tag');
+    const tags = Array.from(tagElements).map(tag => {
+        return tag.childNodes[0].nodeValue.trim();
+    }).filter(tag => tag !== question_title);
+
+    const requestData = {
+        "username": username,
+        "title": question_title,
+        "content": question_content,
+        "tags": tags
+    };
+
+    fetch(`${url}/create/question`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (response.status != 400) {
+                window.location.href = "userhome";
+            } else {
+                window.location.href = "question";
+            }
+            return response.json()
+        })
+        .catch(err => console.error(err));
+}
+
+function handleTagInput() {
+    if (event.key === 'Enter' || event.key === ',' || event.type === 'blur') {
+        event.preventDefault();
+        const tagInput = event.target;
+        const tagValue = tagInput.value.trim();
+        const questionTitle = document.getElementById('question_title').value.trim();
+
+        if (tagValue && tagValue !== questionTitle) {
+            addTag(tagValue);
+            tagInput.value = '';
+        }
+    }
+}
+
+function addTag(tagName) {
+    const tagsInput = document.querySelector('.tags-input');
+
+    const existingTags = Array.from(document.querySelectorAll('.tags-input .tag'))
+        .map(tag => tag.childNodes[0].nodeValue.trim());
+
+    if (existingTags.includes(tagName)) {
+        return;
+    }
+
+    const tagElement = document.createElement('div');
+    tagElement.className = 'tag';
+    tagElement.innerHTML = `
+        ${tagName} <span class="tag-remove" onclick="removeTag(this)">×</span>
+    `;
+    tagsInput.appendChild(tagElement);
+}
+
+function removeTag(removeButton) {
+    removeButton.parentElement.remove();
+}
+
+function initTagHandling() {
+    const tagInput = document.querySelector('.form-group .form-input');
+
+    tagInput.addEventListener('keydown', handleTagInput);
+    tagInput.addEventListener('blur', handleTagInput);
+
+    document.querySelectorAll('.tag-remove').forEach(button => {
+        button.addEventListener('click', function() {
+            removeTag(this);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initTagHandling);
 
 function logout() {
     document.cookie = `username=; login=`;
