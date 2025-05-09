@@ -191,3 +191,39 @@ nav {
     color: #0084ff;
     text-decoration: none;
 }
+
+.account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sort-options {
+    display: flex;
+    gap: 8px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+.sort-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    font-size: 14px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-btn:hover {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.sort-btn.active {
+    background: #0084ff;
+    color: white;
+}

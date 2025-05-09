@@ -31,7 +31,7 @@
             <h3 class="sidebar-title">My Account</h3>
             <ul class="sidebar-menu">
                 <li><a href="profile">Profile</a></li>
-                <li><a href="myquestions"  class="active">My Questions</a></li>
+                <li><a href="myquestions" class="active">My Questions</a></li>
                 <li><a href="myanswers">My Answers</a></li>
                 <li><a href="#">Following</a></li>
                 <li><a href="settings">Settings</a></li>
@@ -42,10 +42,15 @@
         <main class="questions-main">
             <div class="account-header">
                 <h1 class="account-title">My Questions</h1>
+                <div class="sort-options">
+                    <button class="sort-btn active" data-sort="upvotes">Top</button>
+                    <button class="sort-btn" data-sort="newest">Newest</button>
+                    <button class="sort-btn" data-sort="oldest">Oldest</button>
+                </div>
             </div>
-            <ul class="question-list" id="questions_body">
-            </ul>
+            <ul class="question-list" id="questions_body"></ul>
         </main>
+
     </div>
 </div>
 <script src="../static/app.js"></script>

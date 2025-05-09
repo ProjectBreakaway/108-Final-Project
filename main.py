@@ -23,7 +23,7 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     upvotes = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     answers = db.relationship('Answer', backref='question', lazy=True)
@@ -32,7 +32,7 @@ class Question(db.Model):
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     upvotes = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
@@ -154,16 +154,24 @@ def all_questions_asked():
         return jsonify({"error": "Request must be JSON"}), 400
 
     data = request.get_json()
-    username = data["username"]
+    username = data.get("username")
+    sort_method = data.get("sort", "newest")
     user = User.query.filter_by(username=username).first()
-    my_questions = Question.query.filter_by(user_id=user.id).all()
+    my_questions = Question.query.filter_by(user_id=user.id).order_by(desc(Question.timestamp)).all()
+    if sort_method == "oldest":
+        my_questions = Question.query.filter_by(user_id=user.id).order_by(Question.timestamp).all()
+    elif sort_method == "upvotes":
+        my_questions = Question.query.filter_by(user_id=user.id).order_by(desc(Question.upvotes)).all()
     question_dict = {}
+    i = 0
     for question in my_questions:
         total_answers = Answer.query.filter_by(question_id=question.id).count()
-        question_dict[question.title] = [question.content,
+        question_dict[i] = [question.title,
+                                         question.content,
                                          total_answers,
                                          question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
                                          question.upvotes]
+        i += 1
     return jsonify(question_dict), 200
 
 @app.route('/answers/me', methods=['POST'])
@@ -173,12 +181,19 @@ def all_answers():
 
     data = request.get_json()
     username = data["username"]
+    sort_method = data.get("sort", "newest")
     user = User.query.filter_by(username=username).first()
-    my_answers = Answer.query.filter_by(user_id=user.id).all()
+    my_answers = Answer.query.filter_by(user_id=user.id).order_by(desc(Answer.timestamp)).all()
+    if sort_method == "oldest":
+        my_answers = Answer.query.filter_by(user_id=user.id).order_by(Answer.timestamp).all()
+    elif sort_method == "upvotes":
+        my_answers = Answer.query.filter_by(user_id=user.id).order_by(desc(Answer.upvotes)).all()
     answer_dict = {}
+    i = 0
     for answer in my_answers:
         question_title = Question.query.filter_by(id=answer.question_id).first().title
-        answer_dict[question_title] = [answer.content, answer.timestamp.strftime("%Y-%m-%d %H:%M:%S"), answer.upvotes]
+        answer_dict[i] = [question_title, answer.content, answer.timestamp.strftime("%Y-%m-%d %H:%M:%S"), answer.upvotes]
+        i += 1
     return jsonify(answer_dict), 200
 
 
@@ -293,7 +308,7 @@ def create_questions():
             question.tags.append(tag)
 
     db.session.commit()
-    return jsonify({"success": "Question created successfully"}), 201
+    return jsonify({"success": "Question created successfully"}), 20
 
 
 @app.route("/create/answer", methods=["POST"])
@@ -307,16 +322,16 @@ def create_answers():
     if not user:
         return jsonify({"error": "User not found"}), 400
 
-    question_id = Question.query.filter_by(title=data["question_title"]).first().id
-    answer = Answer(
-        question_id=question_id,
-        content=data["answer_content"],
-        user_id=user.id
-    )
+    question = Question.query.filter_by(title=data["question_title"]).first()
 
+    answer = Answer(
+        content=data["answer_content"],
+        user_id=user.id,
+        question_id=question.id,
+    )
     db.session.add(answer)
     db.session.commit()
-    return jsonify({"success": "Answer created successfully"}), 201
+    return jsonify({"success": "Answer created successfully"}), 20
 
 @app.route('/question/detail', methods=['POST'])
 def question_detail():
