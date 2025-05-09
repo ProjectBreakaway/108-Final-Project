@@ -107,6 +107,10 @@ def settings():
 def ask_question():
     return render_template("askQuestion.html")
 
+@app.route('/article')
+def write_article():
+    return render_template("writeArticle.html")
+
 @app.route('/profile/me', methods=['POST'])
 def user_profile():
     if not request.is_json:

@@ -189,6 +189,68 @@ function createQuestion() {
         .catch(err => console.error(err));
 }
 
+function createArticle() {
+    const article_title = document.getElementById('article_title').value.trim();
+    const article_content = document.getElementById('article_content').value.trim();
+    const error_element_1 = document.getElementById("title_error");
+    const error_element_2 = document.getElementById("content_error");
+
+    let username = getCookie('username');
+
+    function showError_1(message) {
+        error_element_1.textContent = message;
+        error_element_1.style.display = "block";
+        error_element_1.style.color = "#e74c3c";
+    }
+
+    function showError_2(message) {
+        error_element_2.textContent = message;
+        error_element_2.style.display = "block";
+        error_element_2.style.color = "#e74c3c";
+    }
+
+    if (!article_title) {
+        showError_1("Article title cannot be empty");
+        if (!article_content) {
+            showError_2("Article content cannot be empty");
+            return;
+        }
+        return;
+    }
+
+    if (!article_content) {
+        showError_2("Article content cannot be empty");
+        return;
+    }
+
+    const tagElements = document.querySelectorAll('.tags-input .tag');
+    const tags = Array.from(tagElements).map(tag => {
+        return tag.childNodes[0].nodeValue.trim();
+    }).filter(tag => tag !== article_title);
+
+    const requestData = {
+        "username": username,
+        "title": article_title,
+        "content": article_content,
+        "tags": tags
+    };
+
+    fetch(`${url}/create/question`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(requestData)
+        })
+        .then(response => {
+            if (response.status != 400) {
+                window.location.href = "userhome";
+            } else {
+                window.location.href = "article";
+            }
+            return response.json()
+        })
+        .catch(err => console.error(err));
+}
+
 function handleTagInput() {
     if (event.key === 'Enter' || event.key === ',' || event.type === 'blur') {
         event.preventDefault();
