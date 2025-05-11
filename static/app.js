@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded',
                 <button class="action-btn">${data["upvotes"]} Approval</button>
                 <button class="action-btn">${data["question_total_answers"]} Answers</button>
                 <button type="button" id="like_button" class="action-btn" onclick="
-                    document.cookie = 'question_title=${question_title}';upvote_question()">❤ hhhh</button>
+                    document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
 
@@ -579,6 +579,8 @@ function upvote_question() {
                 like_button.style.color = "#0084ff";
             } else if (response.status == 200) {
                 like_button.style.color = "#8590a6";
+            } else {
+                window.location.href = "userhome";
             }
             return response.json()
         })
