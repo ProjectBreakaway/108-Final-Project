@@ -6,7 +6,7 @@ import secrets
 import bcrypt
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project2.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project1.db"
 db = SQLAlchemy(app)
 
 question_tags = db.Table('question_tags',
