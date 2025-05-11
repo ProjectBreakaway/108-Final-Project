@@ -1,5 +1,9 @@
 const url = "";
 
+function escapeSingleQuotes(str) {
+  return str.replace(/'/g, "\\'");
+}
+
 function logIn() {
     let username_login = document.getElementById("username_login").value;
     let password_login = document.getElementById("password_login").value;
@@ -148,7 +152,7 @@ document.addEventListener('DOMContentLoaded',
                     questions_body.innerHTML = '';
                     for (const [_, [title, content, total_answers, timestamp, upvotes]] of Object.entries(data)) {
                         const item = `<li class="question-item">
-                    <h3 class="question-title"><a onclick="openQuestion('${title}')">${title}</a></h3>
+                    <h3 class="question-title"><a onclick="openQuestion('${escapeSingleQuotes(title)}')">${title}</a></h3>
                     <p class="question-excerpt">${content}</p>
                     <div class="question-meta">
                     <span class="question-stat">${upvotes} approval</span>
@@ -193,15 +197,13 @@ document.addEventListener('DOMContentLoaded',
                     answers_body.innerHTML = '';
                     for (const [_, [question_title, answer_content, timestamp, upvotes]] of Object.entries(data)) {
                         const item = `<li class="answer-item">
-                    <p class="answer-question">In response to: <a onclick="openQuestion('${question_title}')">${question_title}</a></p>
+                    <p class="answer-question">In response to: <a onclick="openQuestion('${escapeSingleQuotes(question_title)}')">${question_title}</a></p>
                     <div class="answer-content">
                         <p>${answer_content}</p>
                     </div>
                     <div class="answer-meta">
                         <span class="answer-stat">${upvotes} approval</span>
                         <span class="answer-stat">${timestamp}</span>
-                        <button class="action-btn">Edit</button>
-                        <button class="action-btn">Delete</button>
                     </div>
                 </li>`;
                         answers_body.innerHTML += item;
@@ -250,8 +252,7 @@ document.addEventListener('DOMContentLoaded',
             <div class="question-actions" id="options">
                 <button class="action-btn">${data["upvotes"]} Approval</button>
                 <button class="action-btn">${data["question_total_answers"]} Answers</button>
-                <button type="button" id="like_button" class="action-btn" onclick="
-                    document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
+                <button type="button" id="like_button" class="action-btn" onclick="upvote_question('${escapeSingleQuotes(question_title)}')">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
                 const tag_body = document.getElementById('tag_body')
@@ -291,7 +292,6 @@ document.addEventListener('DOMContentLoaded',
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data)
                     const all_answers = document.getElementById("all_answers");
                     all_answers.innerHTML = "";
 
@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded',
                 </div>
                 <div class="answer-actions">
                     <button class="action-btn">${upvotes} Approval</button>
-                    <button type="button" class="action-btn" id="like_button_answer" onclick="upvote_answer('${answer_content}')">❤ Like</button>
+                    <button type="button" class="action-btn" id="like_button_answer" onclick="upvote_answer('${escapeSingleQuotes(answer_content)}')">❤ Like</button>
                 </div>`;
                         all_answers.innerHTML += item;
                     }
@@ -338,15 +338,14 @@ document.addEventListener('DOMContentLoaded',
                 main_page_content.innerHTML += head;
                 for (const [_, [question_title, question_content, total_answers, timestamp, upvotes, questioner_name]] of Object.entries(data)) {
                     const item = `<div class="question-card">
-                <h2 class="question-title"><a onclick="openQuestion('${question_title}')">${question_title}</a></h2>
+                <h2 class="question-title"><a onclick="openQuestion('${escapeSingleQuotes(question_title)}')">${question_title}</a></h2>
                 <div class="answer-excerpt">
                     <span class="answer-author">${questioner_name}:</span> ${question_content}
                 </div>
                 <div class="answer-meta">
                     <div class="answer-action">${upvotes} approval</div>
                     <div class="answer-action"><button class="nothing">${total_answers} comments</button></div>
-                    <div class="answer-action"><button type="button" id="like_button" class="nothing" onclick="
-                    document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button></div>
+                    <div class="answer-action"><button type="button" id="like_button" class="nothing" onclick="upvote_question('${escapeSingleQuotes(question_title)}')">❤ Like</button></div>
                 </div>
             </div>`;
                     main_page_content.innerHTML += item;
@@ -383,8 +382,8 @@ function change_user_settings() {
 }
 
 function createQuestion() {
-    const question_title = document.getElementById('question_title').value.trim();
-    const question_content = document.getElementById('question_content').value.trim();
+    const question_title = document.getElementById('question_title').value;
+    const question_content = document.getElementById('question_content').value;
     const error_element = document.getElementById("title_error");
     let username = getCookie('username');
 
@@ -550,9 +549,10 @@ function openQuestion(question_title) {
         .catch(err => console.error(err));
 }
 
-function upvote_question() {
+function upvote_question(question_title) {
+
     const username = getCookie("username");
-    const question_title = getCookie("question_title");
+    document.cookie = `question_title=${question_title}`;
 
     fetch(`${url}/upvote/question`, {
         method: 'PUT',
@@ -662,7 +662,7 @@ function performSearch(tabType) {
                     item = `<div class="result-card">
                         <div class="result-type">Question</div>
                         <h2 class="result-title">
-                            <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                            <a onclick="openQuestion('${escapeSingleQuotes(question_title)}')">${question_title}</a>
                         </h2>
                         <div class="result-excerpt">${content}</div>
                         <div class="result-meta">
@@ -678,7 +678,7 @@ function performSearch(tabType) {
                     item = `<div class="result-card">
                         <div class="result-type">Answer to:</div>
                         <h3 class="related-question">
-                            <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                            <a onclick="openQuestion('${escapeSingleQuotes(question_title)}')">${question_title}</a>
                         </h3>
                         <div class="answer-excerpt">
                             <div class="answer-header">
