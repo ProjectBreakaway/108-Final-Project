@@ -6,7 +6,7 @@ import secrets
 import bcrypt
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project2.db"
 db = SQLAlchemy(app)
 
 question_tags = db.Table('question_tags',
@@ -160,6 +160,9 @@ def home():
 def userhome():
     return render_template("userhome.html")
 
+@app.route('/library')
+def library():
+    return render_template("library.html")
 
 @app.route('/login')
 def login():
