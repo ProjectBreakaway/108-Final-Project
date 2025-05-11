@@ -1,4 +1,4 @@
-const url = "http://127.0.0.1:5000";
+const url = "";
 
 function logIn() {
     let username_login = document.getElementById("username_login").value;
