@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded',
                 </div>
                 <div class="answer-actions">
                     <button class="action-btn">${upvotes} Approval</button>
-                    <button class="action-btn">❤ Like</button>
+                    <button class="action-btn" id="like_button_answer" onclick="upvote_answer('${answer_content}')">❤ Like</button>
                 </div>`;
                         all_answers.innerHTML += item;
                     }
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded',
                 <div class="answer-meta">
                     <div class="answer-action">${upvotes} approval</div>
                     <div class="answer-action"><button class="nothing">${total_answers} comments</button></div>
-                    <div class="answer-action"><button class="nothing">❤ Like</button></div>
+                    <div class="answer-action"><button id="like_button" class="nothing" onclick="upvote_question()">❤ Like</button></div>
                 </div>
             </div>`;
                     main_page_content.innerHTML += item;
@@ -546,6 +546,55 @@ function openQuestion(question_title) {
             return response.json()
         })
         .catch(err => console.error(err));
+}
+
+function upvote_question() {
+    const username = getCookie("username");
+    const question_title = getCookie("question_title");
+
+    fetch(`${url}/upvote/question`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            "question_title": question_title,
+        })
+    })
+        .then(response => {
+            window.location.href = "questionwithanswers";
+            const like_button = document.getElementById("like_button");
+            if (response.status == 201) {
+                like_button.style.color = "#0084ff";
+            } else if (response.status == 200) {
+                like_button.style.color = "#8590a6";
+            }
+            return response.json()
+        })
+        .catch(err => console.error(err));
+}
+
+function upvote_answer(answer_content) {
+    const username = getCookie("username")
+    fetch(`${url}/upvote/answer`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "username": username,
+            "answer_content": answer_content,
+        })
+    })
+        .then(response => {
+            window.location.href = "questionwithanswers";
+            const like_button = document.getElementById("like_button_answer");
+            if (response.status == 201) {
+                like_button.style.color = "#0084ff";
+            } else if (response.status == 200) {
+                like_button.style.color = "#8590a6";
+            }
+            return response.json()
+        })
+        .catch(err => console.error(err));
+
 }
 
 function searching() {

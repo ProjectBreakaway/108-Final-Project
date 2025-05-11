@@ -19,6 +19,11 @@ question_upvotes = db.Table('question_upvotes',
     db.Column('question_id', db.Integer, db.ForeignKey('question.id'), primary_key=True),
 )
 
+answer_upvotes = db.Table('answer_upvotes',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('answer_id', db.Integer, db.ForeignKey('answer.id'), primary_key=True)
+)
+
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False, unique=True)
@@ -52,13 +57,19 @@ class User(db.Model):
     email = db.Column(db.String(), nullable=True, default='')
     salt = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
-
     questions = db.relationship('Question', backref='author', lazy=True)
     answers = db.relationship('Answer', backref='author', lazy=True)
+
     upvoted_questions = db.relationship('Question',
         secondary=question_upvotes,
         backref=db.backref('upvoters', lazy='dynamic'),
         lazy='dynamic'
+    )
+
+    upvoted_answers = db.relationship(
+        'Answer',
+        secondary=answer_upvotes,
+        backref=db.backref('upvoters', lazy='dynamic')
     )
 
     def upvote_question(self, question):
@@ -76,6 +87,23 @@ class User(db.Model):
     def has_upvoted_question(self, question):
         return self.upvoted_questions.filter(
             question_upvotes.c.question_id == question.id
+        ).count() > 0
+
+    def upvote_answer(self, answer):
+        if not self.has_upvoted_answer(answer):
+            self.upvoted_answers.append(answer)
+            answer.upvotes += 1
+            db.session.commit()
+
+    def remove_answer_upvote(self, answer):
+        if self.has_upvoted_answer(answer):
+            self.upvoted_answers.remove(answer)
+            answer.upvotes -= 1
+            db.session.commit()
+
+    def has_upvoted_answer(self, answer):
+        return self.upvoted_answers.filter(
+            answer_upvotes.c.answer_id == answer.id
         ).count() > 0
 
 
@@ -365,34 +393,41 @@ def create_answers():
     db.session.commit()
     return jsonify({"success": "Answer created successfully"}), 200
 
-@app.route("/approval/question", methods=["PUT"])
-def approval_questions():
+@app.route("/upvote/question", methods=["PUT"])
+def upvote_question():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
     data = request.get_json()
     user = User.query.filter_by(username=data["username"]).first()
     question = Question.query.filter_by(title=data["question_title"]).first()
+    if user.id == question.user_id:
+        return jsonify({"error": "Cannot upvote one's own question"}), 400
     if user.has_upvoted_question(question):
         user.remove_upvote(question)
+        return jsonify({"downvote": question.upvotes}), 201
     else:
         user.upvote_question(question)
-    return jsonify({"upvote": question.upvotes}), 200
+        return jsonify({"upvote": question.upvotes}), 200
 
-# @app.route("/disapproval/question", methods=["PUT"])
-# def disapproval_questions():
-#     if not request.is_json:
-#         return jsonify({"error": "Request must be JSON"}), 400
-#
-#     data = request.get_json()
-#     user = User.query.filter_by(username=data["username"]).first()
-#     question = Question.query.filter_by(title=data["question_title"]).first()
-#     if user.id != question.user_id:
-#         question.upvotes -= 1
-#         db.session.commit()
-#         return jsonify({"success": "Question disapproved successfully"}), 200
-#     else:
-#         return jsonify({"error": "User cannot disapprove his own question"}), 400
+
+@app.route("/upvote/answer", methods=["PUT"])
+def upvote_answer():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    user = User.query.filter_by(username=data["username"]).first()
+    answer = Answer.query.filter_by(content=data["answer_content"]).first()
+    if user.id == answer.user_id:
+        return jsonify({"error": "Cannot upvote one's own answer"}), 400
+    if user.has_upvoted_answer(answer):
+        user.remove_answer_upvote(answer)
+        return jsonify({"downvote": answer.upvotes}), 201
+    else:
+        user.upvote_answer(answer)
+        return jsonify({"upvote": answer.upvotes}), 200
+
 
 
 @app.route('/question/detail', methods=['POST'])
