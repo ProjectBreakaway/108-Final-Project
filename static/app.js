@@ -554,7 +554,7 @@ function upvote_question() {
     const question_title = getCookie("question_title");
 
     fetch(`${url}/upvote/question`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             "username": username,
@@ -577,7 +577,7 @@ function upvote_question() {
 function upvote_answer(answer_content) {
     const username = getCookie("username")
     fetch(`${url}/upvote/answer`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
             "username": username,
