@@ -579,30 +579,36 @@ document.addEventListener('DOMContentLoaded',
                         let item;
                         if (type == "question") {
                             item = `<div class="result-card">
-                <div class="result-type">Question</div>
-                <h2 class="result-title"><a onclick="openQuestion('${question_title}')">${question_title}</a></h2>
-                <div class="result-meta">
-                    <span class="result-author">${user_displayed_name}</span>
-                    <div class="result-stats">
-                        <span class="result-stat">${upvotes} approval</span>
-                        <span class="result-stat">${r} answers</span>
-                        <span class="result-stat">${timestamp}</span>
+                    <div class="result-type">Question</div>
+                    <h2 class="result-title">
+                        <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                    </h2>
+                    <div class="result-meta">
+                        <span class="result-author">PhilosophyStudent</span>
+                        <div class="result-stats">
+                            <span class="result-stat">${upvotes} approval</span>
+                            <span class="result-stat">${r} answers</span>
+                            <span class="result-stat">${timestamp}</span>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
                         } else {
                             item = `<div class="result-card">
-                <div class="result-type">Question</div>
-                <h2 class="result-title">In response to: "<a onclick="openQuestion('${question_title}')">${question_title}</a>"</h2>
-                <div class="result-excerpt">${r}</div>
-                <div class="result-meta">
-                    <span class="result-author">${user_displayed_name}</span>
-                    <div class="result-stats">
-                        <span class="result-stat">${upvotes} approval</span>
-                        <span class="result-stat">${timestamp}</span>
+                    <div class="result-type">Answer to:</div>
+                    <h3 class="related-question">
+                        <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                    </h3>
+                    <div class="answer-excerpt">
+                        <div class="answer-header">
+                            <span class="answer-author">${user_displayed_name}</span>
+                            <span class="answer-date">${timestamp}</span>
+                        </div>
+                        <div class="answer-content">${r}</div>
+                        <div class="answer-stats">
+                            <span class="answer-stat">${upvotes} approval</span>
+                        </div>
                     </div>
-                </div>
-            </div>`;
+                </div>`;
                         }
                         i++;
                         search_result_body.innerHTML += item;
