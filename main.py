@@ -549,14 +549,14 @@ def handle_search_request(content_types):
             Question.title.ilike(f'%{search_term}%') |
             Question.content.ilike(f'%{search_term}%')
         ).order_by(desc(Question.timestamp)).all()
-
         for q in questions:
             user = User.query.get(q.user_id)
+            total_answers = Answer.query.filter_by(question_id=q.id).count()
             results[i] = [
                 "question",
                 user.username,
                 q.title,
-                q.content[:200] + '...' if len(q.content) > 200 else q.content,
+                total_answers,
                 q.upvotes,
                 q.timestamp.strftime("%Y-%m-%d")
             ]
