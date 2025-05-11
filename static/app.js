@@ -321,6 +321,39 @@ document.addEventListener('DOMContentLoaded',
 
     });
 
+document.addEventListener('DOMContentLoaded',
+    function displayQuestionsInHomePage() {
+
+            fetch(`${url}/questions/home`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const main_page_content = document.getElementById('main_page_content')
+                    main_page_content.innerHTML = '';
+                    const head = `<div class="feed-tabs">
+                <div class="feed-tab active">Recommended</div>
+            </div>`
+                    main_page_content.innerHTML += head;
+                    for (const [_, [question_title, question_content, total_answers, timestamp, upvotes, questioner_name]] of Object.entries(data)) {
+                        const item = `<div class="question-card">
+                <h2 class="question-title"><a onclick="openQuestion('${question_title}')">${question_title}</a></h2>
+                <div class="answer-excerpt">
+                    <span class="answer-author">${questioner_name}:</span> ${question_content}
+                </div>
+                <div class="answer-meta">
+                    <div class="answer-action">${upvotes} approval</div>
+                    <div class="answer-action"><button class="nothing">${total_answers} comments</button></div>
+                    <div class="answer-action"><button class="nothing">❤ Like</button></div>
+                </div>
+            </div>`;
+                        main_page_content.innerHTML += item;
+                    }
+                })
+                .catch(err => console.error(err));
+    });
+
 function change_user_settings() {
     const displayed_name = document.getElementById('displayed_name_in_settings').value;
     const email = document.getElementById('email_in_settings').value;
@@ -460,6 +493,11 @@ function createAnswer() {
     const answer_content = document.getElementById('answer_content').value;
     const error_element = document.getElementById("content_error");
     let username = getCookie('username');
+
+    if (!username) {
+        window.location.href = "login"
+        return;
+    }
 
     function showError(message) {
         error_element.textContent = message;

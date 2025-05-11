@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 import secrets
 import bcrypt
+from sqlalchemy.sql.functions import current_user
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
@@ -398,12 +399,10 @@ def question_detail():
 
     data = request.get_json()
     question_title = data["question_title"]
-    current_user = User.query.filter_by(username=data["current_username"]).first()
     question = Question.query.filter_by(title=question_title).first()
     user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
     total_answers = Answer.query.filter_by(question_id=question.id).count()
     tags = [{"id": tag.id, "name": tag.name, "description": tag.description} for tag in question.tags]
-    has_upvoted = current_user.has_upvoted_question(question)
     return jsonify({
         "title": question.title,
         "question_content": question.content,
@@ -412,8 +411,6 @@ def question_detail():
         "upvotes": question.upvotes,
         "question_timestamp": question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         "tags": tags,
-        "has_upvoted": has_upvoted,
-        "same_person": question.user_id == current_user.id,
     }), 200
 
 
@@ -441,6 +438,29 @@ def answers_detail():
         answer_dict[i] = [answer_user.displayed_name ,answer.content, answer.timestamp.strftime("%Y-%m-%d %H:%M:%S"), answer.upvotes]
         i += 1
     return jsonify(answer_dict), 200
+
+@app.route('/questions/home', methods=['POST'])
+def questions_in_homepage():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    any_questions = Question.query.all()
+    any_questions_dict = {}
+    i = 0
+    for question in any_questions:
+        if i == 5:
+            break
+        total_answers = Answer.query.filter_by(question_id=question.id).count()
+        user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
+        any_questions_dict[i] = [question.title,
+                                         question.content,
+                                         total_answers,
+                                         question.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                                         question.upvotes,
+                                 user_displayed_name]
+        i += 1
+    return jsonify(any_questions_dict), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
