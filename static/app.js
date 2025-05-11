@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded',
             <div class="question-actions" id="options">
                 <button class="action-btn">${data["upvotes"]} Approval</button>
                 <button class="action-btn">${data["question_total_answers"]} Answers</button>
-                <button type="button" class="action-btn" id="like_button" onclick="upvote_question()">❤ Like</button>
+                <button class="action-btn" type="button" id="like_button" onclick="upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
 
@@ -354,7 +354,8 @@ document.addEventListener('DOMContentLoaded',
                 <div class="answer-meta">
                     <div class="answer-action">${upvotes} approval</div>
                     <div class="answer-action"><button class="nothing">${total_answers} comments</button></div>
-                    <div class="answer-action"><button type="button" id="like_button" class="nothing" onclick="upvote_question()">❤ Like</button></div>
+                    <div class="answer-action"><button type="button" id="like_button" class="nothing" onclick="
+                    document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button></div>
                 </div>
             </div>`;
                     main_page_content.innerHTML += item;
