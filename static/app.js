@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded',
                     document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
-                
+
                 const tag_body = document.getElementById('tag_body')
                 tag_body.innerHTML = ''
                 for (const tag of Object.entries(data["tags"])) {
@@ -571,7 +571,7 @@ function upvote_question() {
             } else if (response.status == 200) {
                 like_button.style.color = "#8590a6";
             } else {
-                window.location.href = "userhome";
+                window.location.href = "questionwithanswers";
             }
             return response.json()
         })
@@ -624,7 +624,7 @@ document.addEventListener('DOMContentLoaded',
                 let i = 0;
                 if (Object.entries(data).length == undefined) {
                     const item = `<div class="no-results">
-                    <h3>No results found for "${searching_content}"</h3>
+                    <h3>No results found for "${getCookie("searching_content")}"</h3>
                     <p>Try different keywords or check out popular topics.</p>
                 </div>`;
                     search_result_body.innerHTML += item;
