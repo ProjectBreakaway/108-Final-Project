@@ -664,7 +664,6 @@ function performSearch(tabType) {
                         <h2 class="result-title">
                             <a onclick="openQuestion('${escapeSingleQuotes(question_title)}')">${question_title}</a>
                         </h2>
-                        <div class="result-excerpt">${content}</div>
                         <div class="result-meta">
                             <span class="result-author">${user_displayed_name}</span>
                             <div class="result-stats">
