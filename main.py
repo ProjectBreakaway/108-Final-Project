@@ -519,56 +519,65 @@ def questions_in_homepage():
         i += 1
     return jsonify(any_questions_dict), 200
 
+
 @app.route('/search/all', methods=['POST'])
-def searching():
+def search_all():
+    return handle_search_request(['question', 'answer'])
+
+@app.route('/search/questions', methods=['POST'])
+def search_questions():
+    return handle_search_request(['question'])
+
+@app.route('/search/answers', methods=['POST'])
+def search_answers():
+    return handle_search_request(['answer'])
+
+def handle_search_request(content_types):
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
 
     data = request.get_json()
-    keywords = data["searching_content"]
-    all_questions = Question.query.all()
-    result_dict = {}
+    search_term = data.get("searching_content", "")
+    results = {}
     i = 0
-    for question in all_questions:
-        question_title = question.title
-        question_content = question.content
-        tags = [tag.name for tag in question.tags]
-        if keywords in question_title or keywords in question_content:
-            user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
-            total_answers = Answer.query.filter_by(question_id=question.id).count()
-            result_dict[i] = ["question",
-                              user_displayed_name,
-                              question.title,
-                              total_answers,
-                              question.upvotes,
-                              question.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
-        for tag in tags:
-            if keywords in tag:
-                user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
-                total_answers = Answer.query.filter_by(question_id=question.id).count()
-                result_dict[i] = ["question",
-                                  user_displayed_name,
-                                  question.title,
-                                  total_answers,
-                                  question.upvotes,
-                                  question.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
-        i += 1
 
-    all_answer = Answer.query.all()
-    for answer in all_answer:
-        answer_content = answer.content
-        if keywords in answer_content:
-            user_displayed_name = User.query.filter_by(id=answer.user_id).first().displayed_name
-            related_question = Question.query.filter_by(id=answer.question_id).first().title
-            result_dict[i] = ["answer",
-                              user_displayed_name,
-                              related_question,
-                              answer_content,
-                              answer.upvotes,
-                              answer.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
-        i += 1
+    if 'question' in content_types:
+        questions = Question.query.filter(
+            Question.title.ilike(f'%{search_term}%') |
+            Question.content.ilike(f'%{search_term}%')
+        ).order_by(desc(Question.timestamp)).all()
 
-    return jsonify(result_dict), 200
+        for q in questions:
+            user = User.query.get(q.user_id)
+            results[i] = [
+                "question",
+                user.username,
+                q.title,
+                q.content[:200] + '...' if len(q.content) > 200 else q.content,
+                q.upvotes,
+                q.timestamp.strftime("%Y-%m-%d")
+            ]
+            i += 1
+
+    if 'answer' in content_types:
+        answers = Answer.query.filter(
+            Answer.content.ilike(f'%{search_term}%')
+        ).order_by(desc(Answer.timestamp)).all()
+
+        for a in answers:
+            user = User.query.get(a.user_id)
+            question = Question.query.get(a.question_id)
+            results[i] = [
+                "answer",
+                user.username,
+                question.title,
+                a.content[:300] + '...' if len(a.content) > 300 else a.content,
+                a.upvotes,
+                a.timestamp.strftime("%Y-%m-%d")
+            ]
+            i += 1
+
+    return jsonify(results), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

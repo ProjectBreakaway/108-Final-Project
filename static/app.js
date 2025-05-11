@@ -254,7 +254,6 @@ document.addEventListener('DOMContentLoaded',
                     document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
-
                 const tag_body = document.getElementById('tag_body')
                 tag_body.innerHTML = ''
                 for (const tag of Object.entries(data["tags"])) {
@@ -571,7 +570,7 @@ function upvote_question() {
             } else if (response.status == 200) {
                 like_button.style.color = "#8590a6";
             } else {
-                window.location.href = "questionwithanswers";
+                window.location.href = "userhome";
             }
             return response.json()
         })
@@ -608,72 +607,107 @@ function searching() {
     document.cookie = `searching_content=${searching_content}`;
 }
 
-document.addEventListener('DOMContentLoaded',
-    function displaySearchingResult() {
-        fetch(`${url}/search/all`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                "searching_content": getCookie("searching_content"),
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                const search_result_body = document.getElementById("search_result_body");
-                search_result_body.innerHTML = "";
-                let i = 0;
-                if (Object.entries(data).length == undefined) {
-                    const item = `<div class="no-results">
-                    <h3>No results found for "${getCookie("searching_content")}"</h3>
-                    <p>Try different keywords or check out popular topics.</p>
-                </div>`;
-                    search_result_body.innerHTML += item;
-                } else {
-                    for (const [_, [type, user_displayed_name, question_title, r, upvotes, timestamp]] of Object.entries(data)) {
-                        let item;
-                        if (type == "question") {
-                            item = `<div class="result-card">
-                    <div class="result-type">Question</div>
-                    <h2 class="result-title">
-                        <a onclick="openQuestion('${question_title}')">${question_title}</a>
-                    </h2>
-                    <div class="result-meta">
-                        <span class="result-author">PhilosophyStudent</span>
-                        <div class="result-stats">
-                            <span class="result-stat">${upvotes} approval</span>
-                            <span class="result-stat">${r} answers</span>
-                            <span class="result-stat">${timestamp}</span>
-                        </div>
-                    </div>
-                </div>`;
-                        } else {
-                            item = `<div class="result-card">
-                    <div class="result-type">Answer to:</div>
-                    <h3 class="related-question">
-                        <a onclick="openQuestion('${question_title}')">${question_title}</a>
-                    </h3>
-                    <div class="answer-excerpt">
-                        <div class="answer-header">
-                            <span class="answer-author">${user_displayed_name}</span>
-                            <span class="answer-date">${timestamp}</span>
-                        </div>
-                        <div class="answer-content">${r}</div>
-                        <div class="answer-stats">
-                            <span class="answer-stat">${upvotes} approval</span>
-                        </div>
-                    </div>
-                </div>`;
-                        }
-                        i++;
-                        search_result_body.innerHTML += item;
-                    }
+document.addEventListener('DOMContentLoaded', function() {
+    const defaultTab = document.querySelector('.search-tab.active').textContent;
+    performSearch(defaultTab);
 
-                }
-                const num_of_result = document.getElementById("num_of_result");
-                num_of_result.innerHTML = `${i} results found`;
-            })
-            .catch(err => console.error(err));
+    document.querySelectorAll('.search-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            performSearch(this.textContent);
+        });
     });
+});
+
+function performSearch(tabType) {
+    const searchTerm = getCookie("searching_content");
+    let endpoint;
+
+    switch(tabType) {
+        case 'Questions':
+            endpoint = `${url}/search/questions`;
+            break;
+        case 'Answers':
+            endpoint = `${url}/search/answers`;
+            break;
+        default:
+            endpoint = `${url}/search/all`;
+    }
+
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            "searching_content": searchTerm
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const search_result_body = document.getElementById("search_result_body");
+        search_result_body.innerHTML = "";
+        let i = 0;
+
+        if (!data || Object.entries(data).length === 0) {
+            const item = `<div class="no-results">
+                <h3>No results found for "${searchTerm}"</h3>
+                <p>Try different keywords or check out popular topics.</p>
+            </div>`;
+            search_result_body.innerHTML = item;
+        } else {
+            for (const [_, [type, user_displayed_name, question_title, content, upvotes, timestamp]] of Object.entries(data)) {
+                let item;
+                if (type === "question") {
+                    item = `<div class="result-card">
+                        <div class="result-type">Question</div>
+                        <h2 class="result-title">
+                            <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                        </h2>
+                        <div class="result-excerpt">${content}</div>
+                        <div class="result-meta">
+                            <span class="result-author">${user_displayed_name}</span>
+                            <div class="result-stats">
+                                <span class="result-stat">${upvotes} approval</span>
+                                <span class="result-stat">${content} answers</span>
+                                <span class="result-stat">${timestamp}</span>
+                            </div>
+                        </div>
+                    </div>`;
+                } else {
+                    item = `<div class="result-card">
+                        <div class="result-type">Answer to:</div>
+                        <h3 class="related-question">
+                            <a onclick="openQuestion('${question_title}')">${question_title}</a>
+                        </h3>
+                        <div class="answer-excerpt">
+                            <div class="answer-header">
+                                <span class="answer-author">${user_displayed_name}</span>
+                                <span class="answer-date">${timestamp}</span>
+                            </div>
+                            <div class="answer-content">${content}</div>
+                            <div class="answer-stats">
+                                <span class="answer-stat">${upvotes} approval</span>
+                            </div>
+                        </div>
+                    </div>`;
+                }
+
+                search_result_body.innerHTML += item;
+                i++;
+            }
+        }
+
+        document.getElementById("num_of_result").textContent = `${i} results found`;
+    })
+    .catch(err => {
+        console.error('Search error:', err);
+        document.getElementById("search_result_body").innerHTML = `
+            <div class="no-results">
+                <h3>Error loading results</h3>
+                <p>Please try again later.</p>
+            </div>`;
+    });
+}
 
 function handleTagInput() {
     if (event.key === 'Enter' || event.key === ',' || event.type === 'blur') {
