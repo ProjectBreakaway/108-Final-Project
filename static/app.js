@@ -166,7 +166,6 @@ document.addEventListener('DOMContentLoaded',
 document.addEventListener('DOMContentLoaded',
     function displayAllAnswers() {
         let username = getCookie('username');
-
         const sortButtons = document.querySelectorAll('.sort-btn');
         fetchAndDisplayQuestions('upvotes');
 
