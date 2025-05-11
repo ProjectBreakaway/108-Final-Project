@@ -401,6 +401,8 @@ def upvote_question():
     data = request.get_json()
     user = User.query.filter_by(username=data["username"]).first()
     question = Question.query.filter_by(title=data["question_title"]).first()
+    print(data["username"])
+    print(data["question_title"])
     if user.id == question.user_id:
         return jsonify({"error": "Cannot upvote one's own question"}), 400
     if user.has_upvoted_question(question):
@@ -419,6 +421,8 @@ def upvote_answer():
     data = request.get_json()
     user = User.query.filter_by(username=data["username"]).first()
     answer = Answer.query.filter_by(content=data["answer_content"]).first()
+    print(data["username"])
+    print(data["answer_content"])
     if user.id == answer.user_id:
         return jsonify({"error": "Cannot upvote one's own answer"}), 400
     if user.has_upvoted_answer(answer):
