@@ -6,7 +6,7 @@ import secrets
 import bcrypt
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project2.db"
 db = SQLAlchemy(app)
 
 question_tags = db.Table('question_tags',
@@ -583,4 +583,5 @@ def handle_search_request(content_types):
     return jsonify(results), 200
 
 if __name__ == '__main__':
+    # app.run(debug=True)
     app.run(host='0.0.0.0', port=5000)
