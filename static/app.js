@@ -226,21 +226,33 @@ document.addEventListener('DOMContentLoaded',
         })
             .then(response => response.json())
             .then(data => {
+                const question_container = document.getElementById("question_container");
+                const item = `<div class="question-header">
+                <h1 class="question-title">${data["title"]}</h1>
+            </div>
 
-                const main_question_title = document.getElementById('main_question_title')
-                main_question_title.innerHTML = data["title"]
+            <div class="question-meta">
+                <div class="question-author">
+                    <div class="author-avatar">Ph</div>
+                    <span>${data["user_displayed_name"]}</span>
+                </div>
+                <span>•</span>
+                <span>${data["question_timestamp"]}</span>
+            </div>
 
-                const user_displayed_name = document.getElementById('user_displayed_name')
-                user_displayed_name.innerHTML = data["user_displayed_name"]
+            <div class="question-content">
+                <p>${data["question_content"]}</p>
+            </div>
 
-                const question_timestamp = document.getElementById('question_timestamp')
-                question_timestamp.innerHTML = data["question_timestamp"]
+            <div class="question-tags" id="tag_body">
+            </div>
 
-                const question_content = document.getElementById('question_content')
-                question_content.innerHTML = data["question_content"]
-
-                const question_upvotes = document.getElementById('question_upvotes')
-                question_upvotes.innerHTML = data["upvotes"] + " Approval"
+            <div class="question-actions" id="options">
+                <button class="action-btn">${data["upvotes"]} Approval</button>
+                <button class="action-btn">${data["question_total_answers"]} Answers</button>
+                <button class="action-btn" id="like_button" onclick="upvote_question()">❤ Like</button>
+            </div>`;
+                question_container.innerHTML += item;
 
                 const like_button = document.getElementById("like_button")
                 if (data["has_upvoted"] === true || data["same_person"] === true) {
@@ -250,9 +262,6 @@ document.addEventListener('DOMContentLoaded',
                     like_button.classList.add("active");
                     like_button.disabled = true;
                 }
-
-                const question_total_answers = document.getElementById('question_total_answers')
-                question_total_answers.innerHTML = data["question_total_answers"] + " Answers"
 
                 const tag_body = document.getElementById('tag_body')
                 tag_body.innerHTML = ''
