@@ -709,6 +709,11 @@ function performSearch(tabType) {
     });
 }
 
+function searchingRelatedTopic(topic) {
+    window.location.href = "searchingResult";
+    document.cookie = `searching_content=${topic}`;
+}
+
 function handleTagInput() {
     if (event.key === 'Enter' || event.key === ',' || event.type === 'blur') {
         event.preventDefault();
