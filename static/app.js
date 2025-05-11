@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded',
                 </div>
                 <div class="answer-actions">
                     <button class="action-btn">${upvotes} Approval</button>
-                    <button class="action-btn" id="like_button_answer" onclick="upvote_answer('${answer_content}')">❤ Like</button>
+                    <button type="button" class="action-btn" id="like_button_answer" onclick="upvote_answer('${answer_content}')">❤ Like</button>
                 </div>`;
                         all_answers.innerHTML += item;
                     }
@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded',
                 <div class="answer-meta">
                     <div class="answer-action">${upvotes} approval</div>
                     <div class="answer-action"><button class="nothing">${total_answers} comments</button></div>
-                    <div class="answer-action"><button id="like_button" class="nothing" onclick="upvote_question()">❤ Like</button></div>
+                    <div class="answer-action"><button type="button" id="like_button" class="nothing" onclick="upvote_question()">❤ Like</button></div>
                 </div>
             </div>`;
                     main_page_content.innerHTML += item;
