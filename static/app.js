@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded',
             <div class="question-actions" id="options">
                 <button class="action-btn">${data["upvotes"]} Approval</button>
                 <button class="action-btn">${data["question_total_answers"]} Answers</button>
-                <button type="button" id="like_button" class="action-btn" onclick="
+                <button type="submit" id="like_button" class="action-btn" onclick="
                     document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
