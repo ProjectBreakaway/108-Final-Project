@@ -19,8 +19,8 @@
                 <a href="#">Library</a>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Search philosophical questions...">
-                <button class="search-button">Search</button>
+                <input id="searching_content" type="text" placeholder="Search philosophical questions...">
+                <button type="button" class="search-button" onclick="searching()">Search</button>
             </div>
             <div id="rightTopCorner">
                 <a href="login" style="text-decoration: none;" class="login-btn">Log in</a>
@@ -45,20 +45,10 @@
             <div class="sidebar-widget">
                 <h3 class="widget-title">Recommended Topics</h3>
                 <ul class="recommend-list">
-                    <li class="recommend-item"><a href="#">Philosophy of Religion</a></li>
-                    <li class="recommend-item"><a href="#">Ethics</a></li>
-                    <li class="recommend-item"><a href="#">Metaphysics</a></li>
-                    <li class="recommend-item"><a href="#">Political Philosophy</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-widget">
-                <h3 class="widget-title">Recommended Books</h3>
-                <ul class="recommend-list">
-                    <li class="recommend-item"><a href="#">Socrates</a></li>
-                    <li class="recommend-item"><a href="#">Simone de Beauvoir</a></li>
-                    <li class="recommend-item"><a href="#">Ludwig Wittgenstein</a></li>
-                    <li class="recommend-item"><a href="#">Confucius</a></li>
+                    <li class="recommend-item"><a onclick="document.cookie = `searching_content=Philosophy of Religion`;searching()">Philosophy of Religion</a></li>
+                    <li class="recommend-item"><a onclick="document.cookie = `searching_content=Ethics`;searching()">Ethics</a></li>
+                    <li class="recommend-item"><a onclick="document.cookie = `searching_content=Metaphysics`;searching()">Metaphysics</a></li>
+                    <li class="recommend-item"><a onclick="document.cookie = `searching_content=Political Philosophy`;searching()">Political Philosophy</a></li>
                 </ul>
             </div>
         </aside>

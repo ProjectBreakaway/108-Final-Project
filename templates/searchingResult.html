@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophia - Search Results</title>
+    <script src="../static/app.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #1a1a1a;
+            background-color: #f6f6f6;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0084ff;
+            text-decoration: none;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        .main-nav a {
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .main-nav a:hover {
+            color: #0084ff;
+        }
+
+        .search-container {
+            margin: 30px 0;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .search-count {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .search-tabs {
+            display: flex;
+            border-bottom: 1px solid #ebebeb;
+            margin-bottom: 20px;
+        }
+
+        .search-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 15px;
+            color: #8590a6;
+            border-bottom: 2px solid transparent;
+        }
+
+        .search-tab.active {
+            color: #0084ff;
+            border-bottom-color: #0084ff;
+        }
+
+        .result-card {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .result-type {
+            font-size: 12px;
+            color: #8590a6;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+        }
+
+        .result-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .result-title a:hover {
+            color: #0084ff;
+        }
+
+        .result-excerpt {
+            color: #444;
+            margin: 10px 0;
+            font-size: 15px;
+        }
+
+        .result-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            color: #8590a6;
+            font-size: 14px;
+        }
+
+        .result-author {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .result-stats {
+            display: flex;
+            gap: 15px;
+        }
+
+        .result-stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .search-sidebar {
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+        }
+
+        .related-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: #f0f7ff;
+            color: #0084ff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a onclick="backToHome()" class="logo">Philosophia</a>
+                <div class="main-nav">
+                    <a onclick="backToHome()">Home</a>
+                    <a href="#">Topics</a>
+                    <a href="#">Library</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <div class="search-header">
+                <h1 class="search-title">Search Results for "existentialism"</h1>
+                <div class="search-count" id="num_of_result"></div>
+            </div>
+
+            <div class="search-tabs">
+                <div class="search-tab active">All</div>
+                <div class="search-tab">Questions</div>
+                <div class="search-tab">Answers</div>
+            </div>
+
+            <main id="search_result_body">
+            </main>
+
+            <div class="search-sidebar">
+                <h3 class="sidebar-title">Related Topics</h3>
+                <div class="related-tags">
+                    <a onclick="document.cookie = `searching_content=Epistemology`;searching()" class="tag">Epistemology</a>
+                    <a onclick="document.cookie = `searching_content=Logic`;searching()" class="tag">Logic</a>
+                    <a onclick="document.cookie = `searching_content=Aesthetics`;searching()" class="tag">Aesthetics</a>
+                    <a onclick="document.cookie = `searching_content=Nihilism`;searching()" class="tag">Nihilism</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

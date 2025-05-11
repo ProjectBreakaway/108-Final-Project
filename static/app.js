@@ -13,7 +13,7 @@ function logIn() {
     })
         .then(response => {
             if (response.status != 400) {
-                document.cookie = `username=${username_login}; login=${true}; question_title=`;
+                document.cookie = `username=${username_login}; login=${true}; question_title=; searching_content=`;
                 window.location.href = "userhome";
             } else {
                 window.location.href = "login";
@@ -282,20 +282,20 @@ document.addEventListener('DOMContentLoaded',
 
         function fetchAndDisplayQuestions(sortMethod) {
             fetch(`${url}/answers/detail`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                "question_title": question_title,
-                "sort": sortMethod
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    "question_title": question_title,
+                    "sort": sortMethod
+                })
             })
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data)
-                const all_answers = document.getElementById("all_answers");
-                all_answers.innerHTML = "";
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    const all_answers = document.getElementById("all_answers");
+                    all_answers.innerHTML = "";
 
-                for (const [_, [answerer_name, answer_content, timestamp, upvotes]] of Object.entries(data)) {
+                    for (const [_, [answerer_name, answer_content, timestamp, upvotes]] of Object.entries(data)) {
                         const item = `<div class="answer-header">
                     <div class="answer-author">
                         <div class="answer-avatar">Ph</div>
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded',
                 </div>`;
                         all_answers.innerHTML += item;
                     }
-            })
+                })
                 .catch(err => console.error(err));
         }
 
@@ -324,20 +324,20 @@ document.addEventListener('DOMContentLoaded',
 document.addEventListener('DOMContentLoaded',
     function displayQuestionsInHomePage() {
 
-            fetch(`${url}/questions/home`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-            })
-                .then(response => response.json())
-                .then(data => {
-                    const main_page_content = document.getElementById('main_page_content')
-                    main_page_content.innerHTML = '';
-                    const head = `<div class="feed-tabs">
+        fetch(`${url}/questions/home`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+        })
+            .then(response => response.json())
+            .then(data => {
+                const main_page_content = document.getElementById('main_page_content')
+                main_page_content.innerHTML = '';
+                const head = `<div class="feed-tabs">
                 <div class="feed-tab active">Recommended</div>
             </div>`
-                    main_page_content.innerHTML += head;
-                    for (const [_, [question_title, question_content, total_answers, timestamp, upvotes, questioner_name]] of Object.entries(data)) {
-                        const item = `<div class="question-card">
+                main_page_content.innerHTML += head;
+                for (const [_, [question_title, question_content, total_answers, timestamp, upvotes, questioner_name]] of Object.entries(data)) {
+                    const item = `<div class="question-card">
                 <h2 class="question-title"><a onclick="openQuestion('${question_title}')">${question_title}</a></h2>
                 <div class="answer-excerpt">
                     <span class="answer-author">${questioner_name}:</span> ${question_content}
@@ -348,10 +348,10 @@ document.addEventListener('DOMContentLoaded',
                     <div class="answer-action"><button class="nothing">❤ Like</button></div>
                 </div>
             </div>`;
-                        main_page_content.innerHTML += item;
-                    }
-                })
-                .catch(err => console.error(err));
+                    main_page_content.innerHTML += item;
+                }
+            })
+            .catch(err => console.error(err));
     });
 
 function change_user_settings() {
@@ -549,6 +549,73 @@ function openQuestion(question_title) {
         .catch(err => console.error(err));
 }
 
+function searching() {
+    const searching_content = document.getElementById('searching_content').value.trim();
+    window.location.href = "searchingResult";
+    document.cookie = `searching_content=${searching_content}`;
+}
+
+document.addEventListener('DOMContentLoaded',
+    function displaySearchingResult() {
+        fetch(`${url}/search/all`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                "searching_content": getCookie("searching_content"),
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const search_result_body = document.getElementById("search_result_body");
+                search_result_body.innerHTML = "";
+                let i = 0;
+                if (Object.entries(data).length == undefined) {
+                    const item = `<div class="no-results">
+                    <h3>No results found for "${searching_content}"</h3>
+                    <p>Try different keywords or check out popular topics.</p>
+                </div>`;
+                    search_result_body.innerHTML += item;
+                } else {
+                    for (const [_, [type, user_displayed_name, question_title, r, upvotes, timestamp]] of Object.entries(data)) {
+                        let item;
+                        if (type == "question") {
+                            item = `<div class="result-card">
+                <div class="result-type">Question</div>
+                <h2 class="result-title"><a onclick="openQuestion('${question_title}')">${question_title}</a></h2>
+                <div class="result-meta">
+                    <span class="result-author">${user_displayed_name}</span>
+                    <div class="result-stats">
+                        <span class="result-stat">${upvotes} approval</span>
+                        <span class="result-stat">${r} answers</span>
+                        <span class="result-stat">${timestamp}</span>
+                    </div>
+                </div>
+            </div>`;
+                        } else {
+                            item = `<div class="result-card">
+                <div class="result-type">Question</div>
+                <h2 class="result-title">In response to: "<a onclick="openQuestion('${question_title}')">${question_title}</a>"</h2>
+                <div class="result-excerpt">${r}</div>
+                <div class="result-meta">
+                    <span class="result-author">${user_displayed_name}</span>
+                    <div class="result-stats">
+                        <span class="result-stat">${upvotes} approval</span>
+                        <span class="result-stat">${timestamp}</span>
+                    </div>
+                </div>
+            </div>`;
+                        }
+                        i++;
+                        search_result_body.innerHTML += item;
+                    }
+
+                }
+                const num_of_result = document.getElementById("num_of_result");
+                num_of_result.innerHTML = `${i} results found`;
+            })
+            .catch(err => console.error(err));
+    });
+
 function handleTagInput() {
     if (event.key === 'Enter' || event.key === ',' || event.type === 'blur') {
         event.preventDefault();
@@ -613,4 +680,13 @@ function getCookie(name) {
         }
     }
     return null;
+}
+
+function backToHome() {
+    let username = getCookie('username')
+    if (!username) {
+        window.location.href = "index";
+    } else {
+        window.location.href = "userhome";
+    }
 }

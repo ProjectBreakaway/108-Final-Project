@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 import secrets
 import bcrypt
-from sqlalchemy.sql.functions import current_user
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
@@ -152,6 +151,10 @@ def my_answer():
 @app.route('/questionwithanswers')
 def question_with_answers():
     return render_template('questionAndAnswers.html')
+
+@app.route('/searchingResult')
+def searchingResult():
+    return render_template("searchingResult.html")
 
 @app.route('/profile/me', methods=['POST'])
 def user_profile():
@@ -461,6 +464,56 @@ def questions_in_homepage():
         i += 1
     return jsonify(any_questions_dict), 200
 
+@app.route('/search/all', methods=['POST'])
+def searching():
+    if not request.is_json:
+        return jsonify({"error": "Request must be JSON"}), 400
+
+    data = request.get_json()
+    keywords = data["searching_content"]
+    all_questions = Question.query.all()
+    result_dict = {}
+    i = 0
+    for question in all_questions:
+        question_title = question.title
+        question_content = question.content
+        tags = [tag.name for tag in question.tags]
+        if keywords in question_title or keywords in question_content:
+            user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
+            total_answers = Answer.query.filter_by(question_id=question.id).count()
+            result_dict[i] = ["question",
+                              user_displayed_name,
+                              question.title,
+                              total_answers,
+                              question.upvotes,
+                              question.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
+        for tag in tags:
+            if keywords in tag:
+                user_displayed_name = User.query.filter_by(id=question.user_id).first().displayed_name
+                total_answers = Answer.query.filter_by(question_id=question.id).count()
+                result_dict[i] = ["question",
+                                  user_displayed_name,
+                                  question.title,
+                                  total_answers,
+                                  question.upvotes,
+                                  question.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
+        i += 1
+
+    all_answer = Answer.query.all()
+    for answer in all_answer:
+        answer_content = answer.content
+        if keywords in answer_content:
+            user_displayed_name = User.query.filter_by(id=answer.user_id).first().displayed_name
+            related_question = Question.query.filter_by(id=answer.question_id).first().title
+            result_dict[i] = ["answer",
+                              user_displayed_name,
+                              related_question,
+                              answer_content,
+                              answer.upvotes,
+                              answer.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
+        i += 1
+
+    return jsonify(result_dict), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
