@@ -644,10 +644,11 @@ function performSearch(tabType) {
     })
     .then(response => response.json())
     .then(data => {
+        const searching_title = document.getElementById("searching_title");
+        searching_title.innerHTML = `Search Results for "${searchTerm}"`
         const search_result_body = document.getElementById("search_result_body");
         search_result_body.innerHTML = "";
         let i = 0;
-
         if (!data || Object.entries(data).length === 0) {
             const item = `<div class="no-results">
                 <h3>No results found for "${searchTerm}"</h3>
