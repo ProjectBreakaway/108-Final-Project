@@ -250,20 +250,11 @@ document.addEventListener('DOMContentLoaded',
             <div class="question-actions" id="options">
                 <button class="action-btn">${data["upvotes"]} Approval</button>
                 <button class="action-btn">${data["question_total_answers"]} Answers</button>
-<button type="button" id="like_button" class="nothing" onclick="
+                <button type="button" id="like_button" class="action-btn" onclick="
                     document.cookie = 'question_title=${question_title}';upvote_question()">❤ Like</button>
             </div>`;
                 question_container.innerHTML += item;
-
-                const like_button = document.getElementById("like_button")
-                if (data["has_upvoted"] === true || data["same_person"] === true) {
-                    like_button.classList.remove("active");
-                    like_button.disabled = false;
-                } else {
-                    like_button.classList.add("active");
-                    like_button.disabled = true;
-                }
-
+                
                 const tag_body = document.getElementById('tag_body')
                 tag_body.innerHTML = ''
                 for (const tag of Object.entries(data["tags"])) {
