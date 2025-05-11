@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded',
         })
             .then(response => response.json())
             .then(data => {
+
                 const main_question_title = document.getElementById('main_question_title')
                 main_question_title.innerHTML = data["title"]
 
