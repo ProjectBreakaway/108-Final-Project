@@ -40,6 +40,33 @@ class Question(db.Model):
     answers = db.relationship('Answer', backref='question', lazy=True)
     tags = db.relationship('Tag', secondary=question_tags, lazy='subquery', backref=db.backref('questions', lazy=True))
 
+    upvoters = db.relationship(
+        'User',
+        secondary=question_upvotes,
+        back_populates='upvoted_questions',
+        lazy='dynamic'
+    )
+
+    def upvote(self, user):
+        if not self.is_upvoted_by(user):
+            self.upvoters.append(user)
+            self.upvotes += 1
+            db.session.commit()
+            return True
+        return False
+
+    def remove_upvote(self, user):
+        if self.is_upvoted_by(user):
+            self.upvoters.remove(user)
+            self.upvotes -= 1
+            db.session.commit()
+            return True
+        return False
+
+    def is_upvoted_by(self, user):
+        return self.upvoters.filter_by(id=user.id).count() > 0
+
+
 class Answer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -86,9 +113,10 @@ class User(db.Model):
     questions = db.relationship('Question', backref='author', lazy=True)
     answers = db.relationship('Answer', backref='author', lazy=True)
 
-    upvoted_questions = db.relationship('Question',
+    upvoted_questions = db.relationship(
+        'Question',
         secondary=question_upvotes,
-        backref=db.backref('upvoters', lazy='dynamic'),
+        back_populates='upvoters',
         lazy='dynamic'
     )
 
@@ -98,24 +126,6 @@ class User(db.Model):
         back_populates='upvoters',
         lazy='dynamic'
     )
-
-    def upvote_question(self, question):
-        if not self.has_upvoted_question(question):
-            self.upvoted_questions.append(question)
-            question.upvotes += 1
-            db.session.commit()
-
-    def remove_upvote(self, question):
-        if self.has_upvoted_question(question):
-            self.upvoted_questions.remove(question)
-            question.upvotes -= 1
-            db.session.commit()
-
-    def has_upvoted_question(self, question):
-        return self.upvoted_questions.filter(
-            question_upvotes.c.question_id == question.id
-        ).count() > 0
-
 
 with app.app_context():
     db.create_all()
@@ -413,11 +423,11 @@ def upvote_question():
     question = Question.query.filter_by(title=data["question_title"]).first()
     if user.id == question.user_id:
         return jsonify({"error": "Cannot upvote one's own question"}), 400
-    if user.has_upvoted_question(question):
-        user.remove_upvote(question)
+    if question.is_upvoted_by(user):
+        question.remove_upvote(user)
         return jsonify({"downvote": question.upvotes}), 201
     else:
-        user.upvote_question(question)
+        question.upvote(user)
         return jsonify({"upvote": question.upvotes}), 200
 
 
