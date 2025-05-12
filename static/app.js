@@ -1,7 +1,7 @@
 const url = "";
 
 function escapeSingleQuotes(str) {
-  return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+  return str.replace(/"/g, '\\"').replace(/'/g, "\\'");
 }
 
 function logIn() {
